@@ -1,0 +1,7 @@
+.header.erp-navbar { min-height: 76px; padding: 14px 6%; background: var(--header-surface); border-bottom: 1px solid var(--border-color); }
+        .erp-navbar__content { display: flex; width: min(1400px, 100%); margin: 0 auto; align-items: center; justify-content: space-between; gap: 28px; }
+        .header .erp-navbar__brand { flex: 0 0 auto; margin: 0 !important; color: var(--accent-text); font-size: 21px; font-weight: 700; letter-spacing: 5px; text-decoration: none; }
+        .erp-navbar__links { display: flex; align-items: center; justify-content: flex-end; gap: 4px 20px; flex-wrap: wrap; }
+        .header .erp-navbar__links a { margin: 0 !important; padding: 7px 0; color: var(--accent-text); font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; transition: color .18s ease; }
+        .header .erp-navbar__links a:hover, .header .erp-navbar__links a:focus-visible { color: var(--text-primary); }
+        @media (max-width: 900px) { .header.erp-navbar { padding: 14px 4%; } .erp-navbar__content { align-items: flex-start; flex-direction: column; gap: 8px; } .erp-navbar__links { justify-content: flex-start; gap: 2px 16px; } }

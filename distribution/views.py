@@ -375,10 +375,11 @@ def create_production_order_from_line(request, line_pk):
 
 
 
-pdfmetrics.registerFont(TTFont("DejaVuSans", "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"))
-pdfmetrics.registerFont(TTFont("DejaVuSans-Bold", "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"))
+FONT_DIR = settings.BASE_DIR / "static" / "fonts"
+pdfmetrics.registerFont(TTFont("DejaVuSans", str(FONT_DIR / "DejaVuSans.ttf")))
+pdfmetrics.registerFont(TTFont("DejaVuSans-Bold", str(FONT_DIR / "DejaVuSans-Bold.ttf")))
 
-LOGO_PATH = "/home/stajyer/ERP/static/branding/logo.png"
+LOGO_PATH = str(settings.BASE_DIR / "static" / "branding" / "SPEEDERSLOGO.png")
 BRAND_COLOR = colors.HexColor("#1a3c6e")
 LIGHT_BG = colors.HexColor("#eef2f8")
 

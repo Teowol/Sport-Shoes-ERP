@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ product.name }} - Hareket Geçmişi</title><link rel="stylesheet" href="/static/css/erp-theme.css?v=3">
-</head>
-<body>
-    <div class="header">
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ product.name }} - Hareket Geçmişi{% endblock %}
+{% block page_class %}page-inventory-product-movement-history{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
+{% endblock %}
+{% block content %}
+<div class="header" data-theme-toolbar>
         <h1>Sneaker ERP - Envanter</h1>
         <div>
             <a href="{% url 'inventory:stock_level_list' %}">Stok Seviyeleri</a>
@@ -22,7 +23,7 @@
 
         <div class="card">
             {% if movements %}
-            <table>
+            <div class="table-scroll" tabindex="0"><table>
                 <thead>
                     <tr>
                         <th>Tarih</th>
@@ -45,7 +46,7 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table></div>
             {% else %}
             <div class="empty-state">
                 <p>Bu ürün için hareket kaydı bulunmuyor.</p>
@@ -53,5 +54,4 @@
             {% endif %}
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

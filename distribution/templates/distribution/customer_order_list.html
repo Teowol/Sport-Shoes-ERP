@@ -1,48 +1,13 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Siparişlerim | SPEEDERS</title>
-    <style>
-        :root {
-            --navy: #061a2d;
-            --gold: #c9a56a;
-            --gold-soft: #e0c18d;
-            --bg: #f4f6fa;
-            --white: #fff;
-            --text: #172033;
-            --muted: #718096;
-            --border: #e3e8ef;
-        }
-        * { box-sizing: border-box; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
-        header { display: flex; align-items: center; justify-content: space-between; padding: 16px 6%; color: var(--white); background: var(--navy); }
-        header a { color: var(--gold-soft); text-decoration: none; font-weight: 700; }
-        .brand { color: var(--white); font-size: 20px; letter-spacing: 4px; }
-        .page { width: min(1000px, 92%); margin: 0 auto; padding: 32px 0 50px; }
-        h1 { color: var(--navy); font-size: 28px; margin: 0 0 22px; }
-        .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--white); }
-        table { width: 100%; border-collapse: collapse; min-width: 700px; }
-        th, td { padding: 13px 14px; border-bottom: 1px solid var(--border); text-align: left; font-size: 14px; }
-        th { color: var(--muted); background: #f0f3f7; font-size: 12px; letter-spacing: .5px; text-transform: uppercase; }
-        tr:last-child td { border-bottom: 0; }
-        tr:hover td { background: #fafbfd; }
-        .link { color: var(--navy); text-decoration: none; font-weight: 700; }
-        .badge { display: inline-block; padding: 4px 9px; border-radius: 5px; font-size: 12px; font-weight: 700; }
-        .badge-draft { color: #9a5d0a; background: #fff0d7; }
-        .badge-confirmed { color: #176b35; background: #e2f5e7; }
-        .badge-in_production { color: #1d4ed8; background: #dbeafe; }
-        .badge-ready_to_ship { color: #6d28d9; background: #ede9fe; }
-        .badge-shipped { color: #0e7490; background: #cffafe; }
-        .badge-completed { color: #166534; background: #dcfce7; }
-        .badge-cancelled { color: #991b1b; background: #fee2e2; }
-        .empty { padding: 50px 20px; border: 1px dashed var(--border); border-radius: 10px; color: var(--muted); background: var(--white); text-align: center; }
-    </style>
-</head>
-<body>
-    <header>
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}Siparişlerim | SPEEDERS{% endblock %}
+{% block page_class %}page-distribution-customer-order-list{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/pages/distribution-customer_order_list.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<header data-theme-toolbar>
         <a class="brand" href="{% url 'customer_home' %}">SPEEDERS</a>
         <a href="{% url 'catalog:product_list' %}">Katalog</a>
     </header>
@@ -52,7 +17,7 @@
 
         {% if orders %}
             <div class="table-wrap">
-                <table>
+                <div class="table-scroll" tabindex="0"><table>
                     <thead>
                         <tr>
                             <th>Sipariş No</th>
@@ -75,11 +40,10 @@
                             </tr>
                         {% endfor %}
                     </tbody>
-                </table>
+                </table></div>
             </div>
         {% else %}
             <div class="empty">Henüz siparişiniz bulunmuyor.</div>
         {% endif %}
     </main>
-</body>
-</html>
+{% endblock %}

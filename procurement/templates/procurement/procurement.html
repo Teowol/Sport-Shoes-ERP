@@ -1,158 +1,15 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Satın Alma | SPEEDERS</title>
-    <style>
-        :root {
-            --navy: #061a2d;
-            --gold: #c9a56a;
-            --bg: #f4f6fa;
-            --white: #ffffff;
-            --text: #172033;
-            --muted: #718096;
-            --border: #e3e8ef;
-        }
+{% extends "core/base.html" %}
+{% load static i18n %}
 
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 6%;
-            color: var(--white);
-            background: var(--navy);
-        }
-
-        header a {
-            color: #e0c18d;
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .brand {
-            color: var(--white);
-            font-size: 20px;
-            letter-spacing: 4px;
-        }
-
-        .page {
-            width: min(1100px, 92%);
-            margin: 0 auto;
-            padding: 32px 0 50px;
-        }
-
-        h1 {
-            margin: 0;
-            color: var(--navy);
-            font-size: 28px;
-        }
-
-        .subtitle {
-            margin: 8px 0 25px;
-            color: var(--muted);
-        }
-
-        .cards {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 16px;
-            margin-bottom: 28px;
-        }
-
-        .card {
-            padding: 20px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--white);
-        }
-
-        .card-title {
-            color: var(--muted);
-            font-size: 13px;
-        }
-
-        .card-number {
-            margin-top: 8px;
-            color: var(--navy);
-            font-size: 30px;
-            font-weight: 700;
-        }
-
-        .section {
-            padding: 22px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--white);
-        }
-
-        h2 {
-            margin: 0 0 16px;
-            color: var(--navy);
-            font-size: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 12px 10px;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-            font-size: 14px;
-        }
-
-        th {
-            color: var(--muted);
-            font-size: 12px;
-            text-transform: uppercase;
-        }
-
-        .empty {
-            color: var(--muted);
-        }
-
-        .admin-link {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 10px 16px;
-            border-radius: 6px;
-            color: var(--navy);
-            background: var(--gold);
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        @media (max-width: 800px) {
-            .cards {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-
-        @media (max-width: 500px) {
-            .cards {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
+{% block title %}Satın Alma | SPEEDERS{% endblock %}
+{% block page_class %}page-procurement-procurement{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/pages/procurement-procurement.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<header data-theme-toolbar>
         <a class="brand" href="{% url 'home' %}">SPEEDERS</a>
-        <a href="{% url 'portal' %}" style="padding: 8px 12px; border: 1px solid rgba(224, 193, 141, .42); border-radius: 8px;">← Portal</a>
+        <a href="{% url 'portal' %}" style="padding: 8px 12px; border: 1px solid var(--accent-border); border-radius: 8px;">← Portal</a>
     </header>
 
     <main class="page">
@@ -187,7 +44,7 @@
             <h2>Son Satın Alma Talepleri</h2>
 
             {% if recent_requests %}
-                <table>
+                <div class="table-scroll" tabindex="0"><table>
                     <thead>
                         <tr>
                             <th>Talep No</th>
@@ -208,7 +65,7 @@
                             </tr>
                         {% endfor %}
                     </tbody>
-                </table>
+                </table></div>
             {% else %}
                 <p class="empty">
                     Henüz satın alma talebi bulunmuyor.
@@ -221,5 +78,4 @@
             </a>
         </section>
     </main>
-</body>
-</html>
+{% endblock %}

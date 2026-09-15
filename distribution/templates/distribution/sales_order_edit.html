@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ order.order_number }} - Düzenle</title><link rel="stylesheet" href="/static/css/erp-theme.css?v=3">
-</head>
-<body>
-    <div class="header">
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ order.order_number }} - Düzenle{% endblock %}
+{% block page_class %}page-distribution-sales-order-edit{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
+{% endblock %}
+{% block content %}
+<div class="header" data-theme-toolbar>
         <h1>Sneaker ERP - Satış</h1>
         <div>
             <a href="{% url 'distribution:sales_order_list' %}">Siparişler</a>
@@ -35,7 +36,7 @@
                     </div>
                     <div class="form-group">
                         <label>Sipariş Numarası</label>
-                        <input type="text" value="{{ order.order_number }}" disabled style="background-color: #f1f5f9; cursor: not-allowed;">
+                        <input type="text" value="{{ order.order_number }}" disabled style="background-color: var(--surface-secondary); cursor: not-allowed;">
                     </div>
                 </div>
                 <div class="form-row" style="grid-template-columns: 1fr 1fr; margin-top: 1rem;">
@@ -117,8 +118,9 @@
             </div>
         </form>
     </div>
-
-    <script>
+{% endblock %}
+{% block scripts %}
+<script>
         let lineIndex = parseInt(document.getElementById('line_count').value) || 1;
         const productsOptions = `{% for p in products %}<option value="{{ p.pk }}">{{ p.code }} - {{ p.name }}</option>{% endfor %}`;
 
@@ -157,5 +159,4 @@
             }
         }
     </script>
-</body>
-</html>
+{% endblock %}

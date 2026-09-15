@@ -1,39 +1,13 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ variant.sku }} Satın Al | SPEEDERS</title>
-    <style>
-        :root {
-            --navy: #061a2d;
-            --gold: #c9a56a;
-            --bg: #f4f6fa;
-            --white: #fff;
-            --text: #172033;
-            --muted: #718096;
-            --border: #e3e8ef;
-        }
-        * { box-sizing: border-box; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
-        header { display: flex; align-items: center; justify-content: space-between; padding: 16px 6%; color: var(--white); background: var(--navy); }
-        header a { color: #e0c18d; text-decoration: none; font-weight: 700; }
-        .brand { color: var(--white); font-size: 20px; letter-spacing: 4px; }
-        .page { width: min(600px, 92%); margin: 0 auto; padding: 32px 0 60px; }
-        .card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 30px; }
-        h1 { color: var(--navy); margin: 0 0 6px; }
-        .sku { color: var(--muted); margin-bottom: 22px; }
-        dl { display: grid; grid-template-columns: 160px 1fr; gap: 10px 16px; margin: 0 0 24px; }
-        dt { color: var(--muted); font-size: 13px; font-weight: 700; }
-        dd { margin: 0; font-size: 14px; }
-        label { display: block; margin-bottom: 6px; font-size: 13px; color: var(--muted); font-weight: 700; }
-        input[type="number"] { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 18px; }
-        button { width: 100%; padding: 12px; border: 0; border-radius: 8px; background: var(--gold); color: var(--navy); font-weight: 700; font-size: 15px; cursor: pointer; }
-        .back { display: inline-block; margin-top: 18px; color: var(--navy); text-decoration: none; font-weight: 700; }
-    </style>
-</head>
-<body>
-    <header>
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ variant.sku }} Satın Al | SPEEDERS{% endblock %}
+{% block page_class %}page-distribution-customer-purchase-detail{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/pages/distribution-customer_purchase_detail.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<header data-theme-toolbar>
         <a class="brand" href="{% url 'customer_home' %}">SPEEDERS</a>
         <a href="{% url 'distribution:customer_purchase' %}">Satın Alma</a>
     </header>
@@ -62,5 +36,4 @@
             <a class="back" href="{% url 'distribution:customer_purchase' %}">← Satın Almaya Dön</a>
         </div>
     </main>
-</body>
-</html>
+{% endblock %}

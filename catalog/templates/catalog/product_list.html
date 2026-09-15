@@ -1,200 +1,15 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ürün Kataloğu | SPEEDERS</title>
-    <style>
-        :root {
-            --navy: #061a2d;
-            --navy-light: #102f55;
-            --gold: #c9a56a;
-            --gold-soft: #e0c18d;
-            --bg: #f4f6fa;
-            --white: #fff;
-            --text: #172033;
-            --muted: #718096;
-            --border: #e3e8ef;
-        }
+{% extends "core/base.html" %}
+{% load static i18n %}
 
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 6%;
-            color: var(--white);
-            background: var(--navy);
-        }
-
-        header a {
-            color: var(--gold-soft);
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .brand {
-            color: var(--white);
-            font-size: 20px;
-            letter-spacing: 4px;
-        }
-
-        .page {
-            width: min(1200px, 92%);
-            margin: 0 auto;
-            padding: 32px 0 50px;
-        }
-
-        .page-title {
-            display: flex;
-            align-items: end;
-            justify-content: space-between;
-            gap: 20px;
-            margin-bottom: 22px;
-        }
-
-        h1 {
-            margin: 0;
-            color: var(--navy);
-            font-size: 28px;
-        }
-
-        .page-title p {
-            margin: 6px 0 0;
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        .filters {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-bottom: 22px;
-            padding: 18px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--white);
-        }
-
-        input, select {
-            min-height: 40px;
-            padding: 8px 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            background: var(--white);
-            color: var(--text);
-        }
-
-        input { min-width: 230px; }
-
-        button {
-            min-height: 40px;
-            padding: 8px 18px;
-            border: 0;
-            border-radius: 6px;
-            color: var(--navy);
-            background: var(--gold);
-            cursor: pointer;
-            font-weight: 700;
-        }
-
-        .table-wrap {
-            overflow-x: auto;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--white);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 850px;
-        }
-
-        th, td {
-            padding: 13px 14px;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-            font-size: 14px;
-        }
-
-        th {
-            color: var(--muted);
-            background: #f0f3f7;
-            font-size: 12px;
-            letter-spacing: .5px;
-            text-transform: uppercase;
-        }
-
-        tr:last-child td { border-bottom: 0; }
-
-        tr:hover td { background: #fafbfd; }
-
-        .link {
-            color: var(--navy);
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 4px 9px;
-            border-radius: 5px;
-            font-size: 12px;
-            font-weight: 700;
-        }
-
-        .active {
-            color: #176b35;
-            background: #e2f5e7;
-        }
-
-        .passive {
-            color: #9a5d0a;
-            background: #fff0d7;
-        }
-
-        .empty {
-            padding: 50px 20px;
-            border: 1px dashed var(--border);
-            border-radius: 10px;
-            color: var(--muted);
-            background: var(--white);
-            text-align: center;
-        }
-
-        @media (max-width: 700px) {
-            .page-title {
-                display: block;
-            }
-
-            .page-title p {
-                margin-top: 8px;
-            }
-
-            .filters > * {
-                width: 100%;
-            }
-
-            input {
-                min-width: 0;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
+{% block title %}Ürün Kataloğu | SPEEDERS{% endblock %}
+{% block page_class %}page-catalog-product-list{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/pages/catalog-product_list.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<header data-theme-toolbar>
         <a class="brand" href="{% url 'home' %}">SPEEDERS</a>
-        <a href="{% url 'portal' %}" style="padding: 8px 12px; border: 1px solid rgba(224, 193, 141, .42); border-radius: 8px;">← Portal</a>
+        <a href="{% url 'portal' %}" style="padding: 8px 12px; border: 1px solid var(--accent-border); border-radius: 8px;">← Portal</a>
     </header>
 
     <main class="page">
@@ -260,7 +75,7 @@
 
         {% if variants %}
             <div class="table-wrap">
-                <table>
+                <div class="table-scroll" tabindex="0"><table>
                     <thead>
                         <tr>
                             <th>SKU</th>
@@ -295,7 +110,7 @@
                             </tr>
                         {% endfor %}
                     </tbody>
-                </table>
+                </table></div>
             </div>
         {% else %}
             <div class="empty">
@@ -304,5 +119,4 @@
             </div>
         {% endif %}
     </main>
-</body>
-</html>
+{% endblock %}

@@ -1,0 +1,10 @@
+{# Local decorative line icons: every use has a visible text label. #}
+<svg class="icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    {% if icon == "bag" %}<path d="M5 7h14l1 14H4L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>
+    {% elif icon == "factory" %}<path d="M3 21V10l6 3V9l6 3V3h4l2 18H3Z"/><path d="M7 17h1m4 0h1m4 0h1"/>
+    {% elif icon == "box" %}<path d="m12 3 9 5v9l-9 5-9-5V8l9-5Z"/><path d="m3 8 9 5 9-5M12 13v9M7.5 5.5l9 5"/>
+    {% elif icon == "clipboard" %}<rect x="5" y="5" width="14" height="17" rx="2"/><rect x="9" y="2" width="6" height="5" rx="1"/><path d="m9 14 2 2 4-4M9 19h6"/>
+    {% elif icon == "layers" %}<path d="m12 3 10 5-10 5L2 8l10-5ZM2 12l10 5 10-5M2 16l10 5 10-5"/>
+    {% elif icon == "arrow" %}<path d="M4 12h16m-6-6 6 6-6 6"/>
+    {% elif icon == "menu" %}<path d="M4 6h16M4 12h16M4 18h16"/>{% endif %}
+</svg>

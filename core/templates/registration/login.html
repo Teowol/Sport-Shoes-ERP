@@ -1,102 +1,13 @@
+{% extends "core/base.html" %}
 {% load static i18n %}
-{% get_current_language as LANGUAGE_CODE %}
-<!DOCTYPE html>
-<html lang="{{ LANGUAGE_CODE }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% translate "Giriş Yap" %} | SPEEDERS</title>
-    <link rel="stylesheet" href="{% static 'css/language-toggle.css' %}">
-    <style>
-        :root {
-            --navy: #061a2d;
-            --gold: #c9a56a;
-            --gold-soft: #e0c18d;
-            --white: #ffffff;
-            --muted: #a9b8c7;
-        }
-        * { box-sizing: border-box; }
-        body {
-            min-height: 100vh;
-            margin: 0;
-            display: grid;
-            place-items: center;
-            padding: 25px;
-            color: var(--white);
-            background: linear-gradient(135deg, #041321, #0b2a45);
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        .card {
-            width: min(100%, 420px);
-            padding: 35px;
-            border: 1px solid rgba(201, 165, 106, 0.35);
-            border-radius: 14px;
-            background: rgba(8, 33, 54, 0.94);
-            box-shadow: 0 18px 42px rgba(0, 0, 0, 0.26);
-        }
-        .brand {
-            color: var(--gold-soft);
-            font-size: 20px;
-            font-weight: 700;
-            letter-spacing: 5px;
-            text-align: center;
-        }
-        .brand img {
-            display: block;
-            width: min(100%, 240px);
-            max-height: 125px;
-            margin: 0 auto;
-            object-fit: contain;
-            border-radius: 10px;
-        }
-        h1 { margin: 24px 0 8px; text-align: center; font-size: 26px; }
-        .subtitle { margin: 0 0 24px; color: var(--muted); text-align: center; font-size: 14px; }
-        label { display: block; margin: 16px 0 7px; color: var(--gold-soft); font-size: 13px; font-weight: 700; }
-        input {
-            width: 100%;
-            padding: 11px 12px;
-            color: var(--white);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            border-radius: 7px;
-            outline: none;
-            background: rgba(255, 255, 255, 0.06);
-        }
-        input:focus { border-color: var(--gold); }
-        .show-password {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin: 10px 0 0;
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 400;
-            cursor: pointer;
-        }
-        .show-password input {
-            width: auto;
-            margin: 0;
-            accent-color: var(--gold);
-            cursor: pointer;
-        }
-        button {
-            width: 100%;
-            margin-top: 24px;
-            padding: 12px;
-            color: var(--navy);
-            border: 0;
-            border-radius: 7px;
-            background: var(--gold);
-            cursor: pointer;
-            font-weight: 700;
-        }
-        button:hover { background: var(--gold-soft); }
-        .error { margin-top: 15px; padding: 10px; color: #ffd5d5; border-radius: 6px; background: rgba(170, 40, 40, 0.25); font-size: 13px; }
-        .bottom-link { margin: 21px 0 0; color: var(--muted); text-align: center; font-size: 14px; }
-        a { color: var(--gold-soft); }
-    </style>
-</head>
-<body>
-    <nav class="language-nav" aria-label="{% translate 'Dil seçimi' %}">
+
+{% block title %}{% translate "Giriş Yap" %} | SPEEDERS{% endblock %}
+{% block page_class %}page-auth{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/pages/core-login.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<nav class="language-nav" aria-label="{% translate 'Dil seçimi' %}" data-theme-toolbar>
         {% include "core/_language_toggle.html" %}
     </nav>
     <main class="card">
@@ -130,10 +41,11 @@
             Fabrika / firma yetkilisi girişi mevcut kullanıcı adı ve şifrenizle yapılır.
         </p>
     </main>
-    <script>
+{% endblock %}
+{% block scripts %}
+<script>
         document.getElementById("show-password").addEventListener("change", function () {
             document.getElementById("id_password").type = this.checked ? "text" : "password";
         });
     </script>
-</body>
-</html>
+{% endblock %}

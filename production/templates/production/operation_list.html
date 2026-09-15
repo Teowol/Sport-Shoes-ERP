@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Operasyon Takip Ekranı</title><link rel="stylesheet" href="/static/css/erp-theme.css?v=3">
-</head>
-<body>
-    <div class="header">
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}Operasyon Takip Ekranı{% endblock %}
+{% block page_class %}page-production-operation-list{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
+{% endblock %}
+{% block content %}
+<div class="header" data-theme-toolbar>
         <h1>Sneaker ERP - Operasyon Takip Ekranı</h1>
         <div>
             <a href="{% url 'production:order_list' %}">Emir Listesi</a>
@@ -38,7 +39,7 @@
 
         <div class="card">
             {% if operations %}
-            <table>
+            <div class="table-scroll" tabindex="0"><table>
                 <thead>
                     <tr>
                         <th>Üretim Emri</th>
@@ -68,22 +69,22 @@
                         </td>
                         <td>
                             {% if op.status == "pending" %}
-                            <form method="post" action="{% url 'production:operation_action' op.pk 'start' %}" style="display:inline;">
+                            <form method="post" action="{% url 'production:operation_action' op.pk 'start' %}" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-start" onclick="return confirm('Operasyonu başlatmak istediğinize emin misiniz?')">Başlat</button>
                             </form>
                             {% elif op.status == "in_progress" %}
-                            <form method="post" action="{% url 'production:operation_action' op.pk 'pause' %}" style="display:inline;">
+                            <form method="post" action="{% url 'production:operation_action' op.pk 'pause' %}" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-secondary" onclick="return confirm('Operasyonu duraklatmak istediğinize emin misiniz?')">Duraklat</button>
                             </form>
-                            <form method="post" action="{% url 'production:operation_action' op.pk 'complete' %}" style="display:inline;">
+                            <form method="post" action="{% url 'production:operation_action' op.pk 'complete' %}" style="display: inline;">
                                 {% csrf_token %}
-                                <input type="number" step="0.001" name="completed_quantity" placeholder="Miktar" style="width:80px; padding:0.35rem; border-radius:6px; border:1px solid var(--border); margin-right:0.25rem;">
+                                <input type="number" step="0.001" name="completed_quantity" placeholder="Miktar" style="width: 80px; padding: 0.35rem; border-radius: 6px; border: 1px solid var(--border); margin-right: 0.25rem;">
                                 <button type="submit" class="btn btn-complete" onclick="return confirm('Operasyonu tamamlamak istediğinize emin misiniz?')">Tamamla</button>
                             </form>
                             {% elif op.status == "paused" %}
-                            <form method="post" action="{% url 'production:operation_action' op.pk 'resume' %}" style="display:inline;">
+                            <form method="post" action="{% url 'production:operation_action' op.pk 'resume' %}" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-start" onclick="return confirm('Operasyonu devam ettirmek istediğinize emin misiniz?')">Devam Ettir</button>
                             </form>
@@ -94,7 +95,7 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table></div>
             {% else %}
             <div class="empty-state">
                 <p>Filtreye uyan operasyon bulunamadı.</p>
@@ -102,5 +103,4 @@
             {% endif %}
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

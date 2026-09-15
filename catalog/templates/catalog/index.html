@@ -1,55 +1,15 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ürün Kataloğu | SPEEDERS</title>
-    <style>
-        :root {
-            --navy: #061a2d;
-            --gold: #c9a56a;
-            --gold-soft: #e0c18d;
-            --white: #ffffff;
-            --muted: #a9b8c7;
-        }
-        * { box-sizing: border-box; }
-        body {
-            min-height: 100vh;
-            margin: 0;
-            display: grid;
-            place-items: center;
-            padding: 24px;
-            color: var(--white);
-            background: linear-gradient(135deg, #041321, #0b2a45);
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        .card {
-            max-width: 520px;
-            text-align: center;
-            padding: 40px;
-            border: 1px solid rgba(201, 165, 106, 0.35);
-            border-radius: 14px;
-            background: rgba(8, 33, 54, 0.94);
-        }
-        .card h1 { margin: 0 0 12px; font-size: 26px; }
-        .card p { color: var(--muted); font-size: 15px; line-height: 1.7; margin: 0 0 24px; }
-        a {
-            display: inline-block;
-            padding: 10px 18px;
-            border-radius: 7px;
-            background: var(--gold);
-            color: var(--navy);
-            text-decoration: none;
-            font-weight: 700;
-        }
-    </style>
-</head>
-<body>
-    <div class="card">
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}Ürün Kataloğu | SPEEDERS{% endblock %}
+{% block page_class %}page-catalog-index{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/pages/catalog-index.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<div class="card">
         <h1>Ürün Kataloğu</h1>
         <p>Bu modül yakında kullanıma açılacak. Şimdilik ürün kartları, kategoriler ve varyasyonları yönetebilmek için yönetim panelini kullanabilirsiniz.</p>
         <a href="{% url 'home' %}">Ana Sayfaya Dön</a>
     </div>
-</body>
-</html>
+{% endblock %}

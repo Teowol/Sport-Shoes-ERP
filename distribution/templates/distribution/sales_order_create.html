@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yeni Satış Siparişi</title><link rel="stylesheet" href="/static/css/erp-theme.css?v=3">
-</head>
-<body>
-    <div class="header">
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}Yeni Satış Siparişi{% endblock %}
+{% block page_class %}page-distribution-sales-order-create{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
+{% endblock %}
+{% block content %}
+<div class="header" data-theme-toolbar>
         <h1>Sneaker ERP - Satış</h1>
         <div>
             <a href="{% url 'distribution:sales_order_list' %}">Siparişler</a>
@@ -29,7 +30,7 @@
                         <label>Müşteri</label>
                         {% if buyer_mode %}
                             <input type="hidden" name="customer" value="{{ locked_customer.pk }}">
-                            <div class="readonly-field" style="padding:10px 12px; border:1px solid var(--border); border-radius:6px; background:#f4f6fa;">
+                            <div class="readonly-field" style="padding: 10px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface-secondary);">
                                 {{ locked_customer.code }} - {{ locked_customer.name }}
                             </div>
                         {% else %}
@@ -95,8 +96,9 @@
             </div>
         </form>
     </div>
-
-    <script>
+{% endblock %}
+{% block scripts %}
+<script>
         let lineIndex = 1;
         const productsOptions = `{% for p in products %}<option value="{{ p.pk }}">{{ p.code }} - {{ p.name }}</option>{% endfor %}`;
 
@@ -135,5 +137,4 @@
             }
         }
     </script>
-</body>
-</html>
+{% endblock %}

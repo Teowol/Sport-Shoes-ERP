@@ -1,0 +1,18 @@
+* { box-sizing: border-box; }
+        body { margin: 0; background: var(--bg-gradient); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
+        header { display: flex; align-items: center; justify-content: space-between; padding: 16px 6%; color: var(--text-primary); background: var(--header-surface); }
+        header a { color: var(--accent-text); text-decoration: none; font-weight: 700; }
+        .brand { color: var(--text-primary); font-size: 20px; letter-spacing: 4px; }
+        .page { width: min(1100px, 94%); margin: 0 auto; padding: 32px 0 60px; }
+        h1 { color: var(--text-heading); margin-bottom: 6px; }
+        .subtitle { color: var(--muted); margin-bottom: 24px; }
+        .search-box { margin-bottom: 24px; }
+        .search-box input { width: 100%; max-width: 380px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
+        .item-card { background: var(--surface-primary); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
+        .item-card h3 { margin: 0; font-size: 17px; color: var(--text-heading); }
+        .item-card .sku { font-size: 12px; color: var(--muted); }
+        .item-card .meta { font-size: 13px; color: var(--text); }
+        .item-card .price { font-size: 18px; font-weight: 700; color: var(--text-heading); margin-top: 6px; }
+        .buy-btn { margin-top: 10px; display: inline-block; text-align: center; padding: 10px; border-radius: 8px; background: var(--accent-primary); color: var(--on-accent); font-weight: 700; text-decoration: none; }
+        .empty { color: var(--muted); padding: 40px 0; text-align: center; }

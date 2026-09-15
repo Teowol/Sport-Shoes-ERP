@@ -1,144 +1,15 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ variant.sku }} | SPEEDERS</title>
-    <style>
-        :root {
-            --navy: #061a2d;
-            --gold: #c9a56a;
-            --bg: #f4f6fa;
-            --white: #fff;
-            --text: #172033;
-            --muted: #718096;
-            --border: #e3e8ef;
-        }
+{% extends "core/base.html" %}
+{% load static i18n %}
 
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--text);
-            font-family: Arial, Helvetica, sans-serif;
-        }
-
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 16px 6%;
-            color: var(--white);
-            background: var(--navy);
-        }
-
-        header a {
-            color: #e0c18d;
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .brand {
-            color: var(--white);
-            font-size: 20px;
-            letter-spacing: 4px;
-        }
-
-        .page {
-            width: min(850px, 92%);
-            margin: 0 auto;
-            padding: 32px 0 50px;
-        }
-
-        .card {
-            padding: 26px;
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            background: var(--white);
-        }
-
-        h1 {
-            margin: 0 0 7px;
-            color: var(--navy);
-            font-size: 27px;
-        }
-
-        .sku {
-            margin-bottom: 24px;
-            color: var(--muted);
-        }
-
-        dl {
-            display: grid;
-            grid-template-columns: 190px 1fr;
-            gap: 13px 20px;
-            margin: 0;
-        }
-
-        dt {
-            color: var(--muted);
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        dd {
-            margin: 0;
-            font-size: 14px;
-        }
-
-        h2 {
-            margin: 30px 0 15px;
-            color: var(--navy);
-            font-size: 20px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th, td {
-            padding: 10px;
-            border-bottom: 1px solid var(--border);
-            text-align: left;
-            font-size: 14px;
-        }
-
-        th {
-            color: var(--muted);
-            font-size: 12px;
-        }
-
-        .back {
-            display: inline-block;
-            margin-top: 24px;
-            color: var(--navy);
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .empty {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        @media (max-width: 600px) {
-            dl {
-                grid-template-columns: 1fr;
-                gap: 5px;
-            }
-
-            dd {
-                margin-bottom: 10px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <header>
+{% block title %}{{ variant.sku }} | SPEEDERS{% endblock %}
+{% block page_class %}page-catalog-product-detail{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/pages/catalog-product_detail.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<header data-theme-toolbar>
         <a class="brand" href="{% url 'home' %}">SPEEDERS</a>
-        <div style="display: flex; gap: 12px; align-items: center;"><a href="{% url 'catalog:product_list' %}">Katalog</a><a href="{% url 'portal' %}" style="padding: 8px 12px; border: 1px solid rgba(224, 193, 141, .42); border-radius: 8px;">← Portal</a></div>
+        <div style="display: flex; gap: 12px; align-items: center;"><a href="{% url 'catalog:product_list' %}">Katalog</a><a href="{% url 'portal' %}" style="padding: 8px 12px; border: 1px solid var(--accent-border); border-radius: 8px;">← Portal</a></div>
     </header>
 
     <main class="page">
@@ -183,7 +54,7 @@
             <h2>Depo Stokları</h2>
 
             {% if stocks %}
-                <table>
+                <div class="table-scroll" tabindex="0"><table>
                     <thead>
                         <tr>
                             <th>Depo</th>
@@ -202,7 +73,7 @@
                             </tr>
                         {% endfor %}
                     </tbody>
-                </table>
+                </table></div>
             {% else %}
                 <p class="empty">Bu ürün için henüz depo stok kaydı bulunmuyor.</p>
             {% endif %}
@@ -210,5 +81,4 @@
             <a class="back" href="{% url 'catalog:product_list' %}">← Kataloğa Dön</a>
         </div>
     </main>
-</body>
-</html>
+{% endblock %}

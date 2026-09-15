@@ -1,13 +1,13 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalite Kontrol Kayıtları</title><link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=4">
-</head>
-<body>
-    <div class="header">
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}Kalite Kontrol Kayıtları{% endblock %}
+{% block page_class %}page-quality-quality-check-list{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
+{% endblock %}
+{% block content %}
+<div class="header" data-theme-toolbar>
         <h1>Sneaker ERP - Kalite Kontrol</h1>
         <div>
             <a href="{% url 'production:order_list' %}">Emir Listesi</a>
@@ -39,7 +39,7 @@
 
         <div class="card">
             {% if checks %}
-            <table>
+            <div class="table-scroll" tabindex="0"><table>
                 <thead>
                     <tr>
                         <th>Üretim Emri</th>
@@ -70,7 +70,7 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table></div>
             {% else %}
             <div class="empty-state">
                 <p>Filtreye uyan kalite kontrol kaydı bulunamadı.</p>
@@ -78,5 +78,4 @@
             {% endif %}
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

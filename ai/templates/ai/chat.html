@@ -1,144 +1,13 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SPEEDERS | Yapay Zekâ Asistanı</title>
-    <style>
-        :root {
-            --navy: #061a2d;
-            --navy-light: #0b2a45;
-            --gold: #c9a56a;
-            --gold-soft: #e0c18d;
-            --white: #ffffff;
-            --muted: #a9b8c7;
-            --line: rgba(201, 165, 106, 0.22);
-        }
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            min-height: 100vh;
-            color: var(--white);
-            background:
-                radial-gradient(circle at top right, rgba(201, 165, 106, 0.14), transparent 30%),
-                linear-gradient(135deg, #041321 0%, #071e33 52%, #061724 100%);
-            font-family: Arial, Helvetica, sans-serif;
-        }
-        .topbar {
-            min-height: 76px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 6%;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .brand {
-            color: var(--gold-soft);
-            font-size: 21px;
-            font-weight: 700;
-            letter-spacing: 5px;
-            text-decoration: none;
-        }
-        .back {
-            color: var(--gold-soft);
-            font-size: 14px;
-            text-decoration: none;
-        }
-        .page {
-            width: min(900px, 90%);
-            margin: 0 auto;
-            padding: 42px 0;
-        }
-        h1 {
-            margin: 0 0 8px;
-            font-size: 30px;
-        }
-        .intro {
-            margin: 0 0 22px;
-            color: var(--muted);
-            font-size: 15px;
-        }
-        .chat-card {
-            min-height: 540px;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--line);
-            border-radius: 14px;
-            background: rgba(7, 29, 48, 0.92);
-            overflow: hidden;
-        }
-        #messages {
-            flex: 1;
-            padding: 22px;
-            overflow-y: auto;
-        }
-        .message {
-            max-width: 82%;
-            margin-bottom: 14px;
-            padding: 13px 15px;
-            border-radius: 12px;
-            line-height: 1.55;
-            white-space: pre-wrap;
-            font-size: 14px;
-        }
-        .message.assistant {
-            margin-right: auto;
-            background: var(--navy-light);
-            border: 1px solid rgba(201, 165, 106, 0.15);
-        }
-        .message.user {
-            margin-left: auto;
-            color: var(--navy);
-            background: var(--gold-soft);
-        }
-        .message.error {
-            margin-right: auto;
-            color: #ffd4d4;
-            background: rgba(130, 30, 30, 0.45);
-        }
-        .chat-form {
-            display: flex;
-            gap: 12px;
-            padding: 16px;
-            border-top: 1px solid var(--line);
-        }
-        .chat-form textarea {
-            min-height: 52px;
-            flex: 1;
-            resize: vertical;
-            padding: 12px;
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            outline: none;
-            color: var(--white);
-            background: #041321;
-            font: inherit;
-        }
-        .chat-form textarea:focus {
-            border-color: var(--gold);
-        }
-        .chat-form button {
-            min-width: 100px;
-            border: 1px solid var(--gold);
-            border-radius: 8px;
-            color: var(--navy);
-            background: var(--gold);
-            font-weight: 700;
-            cursor: pointer;
-        }
-        .chat-form button:disabled {
-            opacity: 0.6;
-            cursor: wait;
-        }
-        @media (max-width: 560px) {
-            .chat-form { flex-direction: column; }
-            .message { max-width: 94%; }
-        }
-    </style>
-</head>
-<body>
-    <header class="topbar">
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}SPEEDERS | Yapay Zekâ Asistanı{% endblock %}
+{% block page_class %}page-ai-chat{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/pages/ai-chat.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<header class="topbar" data-theme-toolbar>
         <a class="brand" href="/">SPEEDERS</a>
         <a class="back" href="javascript:history.back()">← Geri dön</a>
     </header>
@@ -161,8 +30,9 @@
             </form>
         </section>
     </main>
-
-    <script>
+{% endblock %}
+{% block scripts %}
+<script>
         const form = document.getElementById("chat-form");
         const input = document.getElementById("message-input");
         const messages = document.getElementById("messages");
@@ -215,5 +85,4 @@
             }
         });
     </script>
-</body>
-</html>
+{% endblock %}

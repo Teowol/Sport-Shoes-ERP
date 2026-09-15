@@ -1,0 +1,245 @@
+/* SPEEDERS palette. Only these tokens vary between light and dark. */
+:root, html[data-theme="light"] {
+    color-scheme: light;
+    --bg-primary: #f7f8fa;
+    --bg-gradient: radial-gradient(ellipse at 70% 12%, rgba(201,165,106,.09), transparent 35%), linear-gradient(135deg, #fafaf8, #f5f6f8);
+    --surface-primary: #ffffff;
+    --surface-secondary: #f0f2f5;
+    --surface-hover: #f4f0e8;
+    --surface-selected: #eee2ca;
+    --surface-gradient: linear-gradient(135deg, #ffffff, #fafaf8);
+    --header-surface: #fdfdfb;
+    --footer-surface: #f0f2f4;
+    --text-primary: #17283b;
+    --text-secondary: #536276;
+    --text-heading: #061a2d;
+    --border-color: #d9dfe6;
+    --input-border: #8995a4;
+    --input-bg: #ffffff;
+    --disabled-bg: #e9edf1;
+    --disabled-text: #626f7f;
+    --accent-primary: #c9a56a;
+    --accent-hover: #e0c18d;
+    --accent-text: #79591f;
+    --accent-border: #a17c3e;
+    --accent-subtle: #f6efdf;
+    --on-accent: #061a2d;
+    --on-solid: #ffffff;
+    --success-text: #17623c;
+    --success-surface: #e3f3e9;
+    --success-solid: #197345;
+    --danger-text: #a12632;
+    --danger-surface: #fce9eb;
+    --danger-solid: #a92f3d;
+    --warning-text: #79520c;
+    --warning-surface: #faf0d8;
+    --warning-solid: #966416;
+    --info-text: #205f91;
+    --info-surface: #e5f0fa;
+    --info-solid: #286b9c;
+    --quality-text: #684195;
+    --quality-surface: #f0eafa;
+    --quality-solid: #7446a4;
+    --shadow: 0 8px 24px rgba(6,26,45,.07);
+    --shadow-hover: 0 14px 30px rgba(121,89,31,.12);
+    --overlay: rgba(6,26,45,.45);
+    /* Original dark artwork remains a branded inset in either theme. */
+    --artwork-bg: #071725;
+    --artwork-text: #c1cbd5;
+    --artwork-gold: #e0c18d;
+}
+
+html[data-theme="dark"] {
+    color-scheme: dark;
+    --bg-primary: #061724;
+    --bg-gradient: radial-gradient(ellipse at 70% 12%, rgba(201,165,106,.07), transparent 30%), linear-gradient(135deg, #041321, #071e33 55%, #061724);
+    --surface-primary: #0b2339;
+    --surface-secondary: #102f4c;
+    --surface-hover: #17354b;
+    --surface-selected: #3c382e;
+    --surface-gradient: linear-gradient(135deg, #0d2942, #0a2035);
+    --header-surface: #061724;
+    --footer-surface: #041421;
+    --text-primary: #f6f8fa;
+    --text-secondary: #a9b8c7;
+    --text-heading: #f6f8fa;
+    --border-color: #344452;
+    --input-border: #6e8193;
+    --input-bg: #081d30;
+    --disabled-bg: #213448;
+    --disabled-text: #a0afbe;
+    --accent-text: #e0c18d;
+    --accent-border: #c9a56a;
+    --accent-subtle: #292d2e;
+    --success-text: #8fd6ae;
+    --success-surface: #133f30;
+    --danger-text: #ffb5bd;
+    --danger-surface: #482530;
+    --warning-text: #f0cd86;
+    --warning-surface: #423621;
+    --info-text: #a0cfee;
+    --info-surface: #16374f;
+    --quality-text: #d3b7f2;
+    --quality-surface: #352942;
+    --shadow: 0 12px 30px rgba(0,0,0,.23);
+    --shadow-hover: 0 14px 32px rgba(201,165,106,.09);
+    --overlay: rgba(0,0,0,.65);
+}
+
+/* Compatibility aliases keep existing component styles small and semantic. */
+:root {
+    --navy: var(--on-accent);
+    --navy-light: var(--surface-secondary);
+    --gold: var(--accent-primary);
+    --gold-soft: var(--accent-text);
+    --white: var(--text-primary);
+    --bg: var(--bg-primary);
+    --card: var(--surface-primary);
+    --card-bg: var(--surface-primary);
+    --text: var(--text-primary);
+    --muted: var(--text-secondary);
+    --text-muted: var(--text-secondary);
+    --border: var(--border-color);
+    --line: var(--border-color);
+    --primary: var(--text-heading);
+    --primary-light: var(--surface-secondary);
+    --primary-soft: var(--surface-secondary);
+    --accent: var(--accent-primary);
+    --accent-soft: var(--accent-hover);
+    --success: var(--success-solid);
+    --danger: var(--danger-solid);
+    --warning: var(--warning-solid);
+    --info: var(--info-solid);
+    --erp-navy: var(--text-heading);
+    --erp-navy-light: var(--surface-secondary);
+    --erp-gold: var(--accent-primary);
+    --erp-gold-soft: var(--accent-text);
+    --erp-bg: var(--bg-primary);
+    --erp-white: var(--surface-primary);
+    --erp-text: var(--text-primary);
+    --erp-muted: var(--text-secondary);
+    --erp-border: var(--border-color);
+    --badge-planned: var(--quality-surface);
+    --badge-planned-txt: var(--quality-text);
+    --badge-released: var(--info-surface);
+    --badge-released-txt: var(--info-text);
+    --badge-progress: var(--warning-surface);
+    --badge-progress-txt: var(--warning-text);
+    --badge-quality: var(--quality-surface);
+    --badge-quality-txt: var(--quality-text);
+    --badge-completed: var(--success-surface);
+    --badge-completed-txt: var(--success-text);
+    --badge-cancelled: var(--danger-surface);
+    --badge-cancelled-txt: var(--danger-text);
+    --badge-pending: var(--surface-secondary);
+    --badge-pending-txt: var(--text-secondary);
+    --badge-paused: var(--danger-surface);
+    --badge-paused-txt: var(--danger-text);
+}
+
+/* Shared controls and interaction states. These also work in Django admin. */
+.theme-control { display: inline-flex; flex: 0 0 auto; align-items: center; }
+body > .theme-control { position: fixed; right: 22px; bottom: 22px; z-index: 40; }
+.appearance-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 44px;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 0;
+    border: 1px solid var(--accent-border);
+    border-radius: 50%;
+    color: var(--accent-text);
+    background: var(--surface-primary);
+    cursor: pointer;
+    box-shadow: none;
+    transition: background .2s ease, border-color .2s ease;
+}
+.appearance-toggle[hidden] { display: none; }
+.appearance-toggle:hover { background: var(--accent-subtle); color: var(--accent-text); }
+.appearance-toggle svg { width: 20px; height: 20px; margin: 0; padding: 0; background: none; }
+.theme-icon--moon, [data-theme="dark"] .theme-icon--sun { display: none; }
+[data-theme="dark"] .theme-icon--moon { display: block; }
+[data-theme-toolbar] { gap: 12px; }
+:is(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 2px solid var(--accent-border);
+    outline-offset: 3px;
+}
+::selection { background: var(--surface-selected); color: var(--text-primary); }
+
+/* Page layouts keep their original structure; shared components use the palette. */
+.speeders-app *, .speeders-app *::before, .speeders-app *::after { box-sizing: border-box; }
+.speeders-app { background: var(--bg-gradient); color: var(--text-primary); }
+.speeders-app :is(input, textarea, select) { color: var(--text-primary); background-color: var(--input-bg); border-color: var(--input-border); accent-color: var(--accent-primary); font: inherit; }
+.speeders-app :is(input, textarea)::placeholder { color: var(--text-secondary); opacity: 1; }
+.speeders-app :is(input, textarea, select):focus { border-color: var(--accent-border); }
+.speeders-app :is(input, textarea, select):disabled,
+.speeders-app :is(input, textarea)[readonly] { color: var(--disabled-text); background: var(--disabled-bg); }
+.speeders-app :is(button, .btn, .button):disabled,
+.speeders-app [aria-disabled="true"] { color: var(--disabled-text); background: var(--disabled-bg); cursor: not-allowed; transform: none; box-shadow: none; }
+.speeders-app option { color: var(--text-primary); background: var(--input-bg); }
+.speeders-app :is(button, .btn, .button, .btn-back, .buy-btn, .admin-link) { min-height: 44px; }
+.speeders-app :is(input[type="checkbox"], input[type="radio"]) { width: auto; min-width: 0; }
+.speeders-app :is(.error, .errorlist, .msg-error) { color: var(--danger-text); }
+.speeders-app :is(.error, .msg-error) { background: var(--danger-surface); }
+.speeders-app .alert-info { color: var(--info-text); background: var(--info-surface); }
+.speeders-app .alert-warning { color: var(--warning-text); background: var(--warning-surface); }
+.speeders-app :is(.card, .table-card, .table-wrap, .section, .filter-card) { min-width: 0; }
+.speeders-app :is(.table-scroll, .table-wrap, .table-card) { overflow-x: auto; }
+.table-scroll { max-width: 100%; }
+.speeders-app table { color: var(--text-primary); background: var(--surface-primary); }
+.speeders-app th { background: var(--surface-secondary); color: var(--text-secondary); }
+.speeders-app :is(th, td) { border-color: var(--border-color); }
+.speeders-app tbody tr:hover > td { background: var(--surface-hover); }
+.speeders-app tr[aria-selected="true"] > td { background: var(--surface-selected); }
+.speeders-app :is(.btn-primary, .btn-start, .btn-new, .admin-link, .buy-btn) { color: var(--on-accent); background: var(--accent-primary); }
+.speeders-app .filters button { color: var(--on-accent); background: var(--accent-primary); }
+.speeders-app .filters button:hover { background: var(--accent-hover); }
+.speeders-app :is(.btn-secondary, .btn-back) { color: var(--text-primary); background: var(--surface-secondary); }
+.speeders-app :is(.btn-success, .btn-complete) { color: var(--on-solid); background: var(--success-solid); }
+.speeders-app :is(.btn-danger, .btn-cancel) { color: var(--on-solid); background: var(--danger-solid); }
+.speeders-app .btn-release { color: var(--on-solid); background: var(--info-solid); }
+.speeders-app .btn-quality { color: var(--on-solid); background: var(--quality-solid); }
+.speeders-app :is(.btn-success, .btn-complete, .btn-danger, .btn-cancel, .btn-release, .btn-quality):hover { filter: brightness(.92); }
+.speeders-app :is(.status-badge.active, .badge-success, .badge-pass) { color: var(--success-text); background: var(--success-surface); }
+.speeders-app :is(.status-badge.quarantined, .badge-warning, .badge-partial) { color: var(--warning-text); background: var(--warning-surface); }
+.speeders-app :is(.status-badge.expired, .badge-danger, .badge-fail) { color: var(--danger-text); background: var(--danger-surface); }
+.speeders-app .status-badge.consumed { color: var(--text-secondary); background: var(--surface-secondary); }
+.speeders-app :is(.topbar, .header, header:not(.site-header)) { flex-wrap: wrap; }
+.speeders-app :is(.user-actions, .top-actions) { flex-wrap: wrap; }
+.speeders-app :is(.card, .portal-card, .module-card, .profile-card, .item-card) { box-shadow: var(--shadow); }
+.speeders-app :is(.profile-grid .value, .info-value) { overflow-wrap: anywhere; }
+.speeders-app :is(.filters, .filter-form, .form-group) { min-width: 0; }
+.speeders-app :is(.filters, .filter-form) > * { max-width: 100%; }
+.page-auth { padding-top: 90px; }
+.page-auth .language-nav { top: 20px; }
+.page-home .main-nav { gap: 18px; }
+.page-home .brand-mark { background: var(--artwork-bg); }
+.page-home .hero-visual { background: var(--artwork-bg); }
+.page-home :is(.visual-heading, .hero-visual figcaption) { color: var(--artwork-text); }
+.page-home .visual-heading > :first-child { color: var(--artwork-gold); }
+.page-home .visual-rule { background: rgba(201,165,106,.25); }
+.page-home .site-header.is-scrolled { background: var(--header-surface); }
+.page-home h1 span { color: var(--accent-text); }
+.speeders-app .progress-bar { background: var(--surface-secondary); }
+.speeders-app .progress-fill { background: linear-gradient(90deg, var(--success-solid), var(--accent-primary)); }
+
+@media (max-width: 700px) {
+    .speeders-app .form-row { grid-template-columns: minmax(0, 1fr) !important; }
+    .speeders-app .header { gap: 12px; }
+    .speeders-app .header > div:not(.theme-control) { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+    .speeders-app .header a { margin-left: 0; }
+    .speeders-app .profile-grid { grid-template-columns: minmax(0, 1fr); }
+    .speeders-app :is(input, select, textarea) { max-width: 100%; box-sizing: border-box; }
+    .speeders-app :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]), select) { min-height: 44px; }
+    .speeders-app :is(.topbar, .header, header) { gap: 14px; }
+    .speeders-app .topbar > :is(.user-actions, .top-actions) { margin-left: auto; }
+    .page-auth .card { padding: 24px; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .speeders-app *, .appearance-toggle { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}

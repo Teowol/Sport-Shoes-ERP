@@ -1,41 +1,13 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Satın Alma | SPEEDERS</title>
-    <style>
-        :root {
-            --navy: #061a2d;
-            --gold: #c9a56a;
-            --bg: #f4f6fa;
-            --white: #fff;
-            --text: #172033;
-            --muted: #718096;
-            --border: #e3e8ef;
-        }
-        * { box-sizing: border-box; }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
-        header { display: flex; align-items: center; justify-content: space-between; padding: 16px 6%; color: var(--white); background: var(--navy); }
-        header a { color: #e0c18d; text-decoration: none; font-weight: 700; }
-        .brand { color: var(--white); font-size: 20px; letter-spacing: 4px; }
-        .page { width: min(1100px, 94%); margin: 0 auto; padding: 32px 0 60px; }
-        h1 { color: var(--navy); margin-bottom: 6px; }
-        .subtitle { color: var(--muted); margin-bottom: 24px; }
-        .search-box { margin-bottom: 24px; }
-        .search-box input { width: 100%; max-width: 380px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 18px; }
-        .item-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; gap: 8px; }
-        .item-card h3 { margin: 0; font-size: 17px; color: var(--navy); }
-        .item-card .sku { font-size: 12px; color: var(--muted); }
-        .item-card .meta { font-size: 13px; color: var(--text); }
-        .item-card .price { font-size: 18px; font-weight: 700; color: var(--navy); margin-top: 6px; }
-        .buy-btn { margin-top: 10px; display: inline-block; text-align: center; padding: 10px; border-radius: 8px; background: var(--gold); color: var(--navy); font-weight: 700; text-decoration: none; }
-        .empty { color: var(--muted); padding: 40px 0; text-align: center; }
-    </style>
-</head>
-<body>
-    <header>
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}Satın Alma | SPEEDERS{% endblock %}
+{% block page_class %}page-distribution-customer-purchase{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/pages/distribution-customer_purchase.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<header data-theme-toolbar>
         <a class="brand" href="{% url 'customer_home' %}">SPEEDERS</a>
         <a href="{% url 'distribution:customer_order_list' %}">Siparişlerim</a>
     </header>
@@ -64,5 +36,4 @@
             <p class="empty">Uygun ürün bulunamadı.</p>
         {% endif %}
     </main>
-</body>
-</html>
+{% endblock %}

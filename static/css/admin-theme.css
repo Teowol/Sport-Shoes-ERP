@@ -1,0 +1,87 @@
+/* Map Django's own widget palette to SPEEDERS; keep native admin behavior/layout. */
+html[data-theme] {
+    --primary: var(--surface-secondary);
+    --secondary: var(--accent-primary);
+    --accent: var(--accent-text);
+    --primary-fg: var(--text-primary);
+    --body-fg: var(--text-primary);
+    --body-bg: var(--bg-primary);
+    --body-quiet-color: var(--text-secondary);
+    --body-medium-color: var(--text-secondary);
+    --body-loud-color: var(--text-heading);
+    --header-color: var(--text-primary);
+    --header-branding-color: var(--accent-text);
+    --header-bg: var(--header-surface);
+    --header-link-color: var(--accent-text);
+    --breadcrumbs-fg: var(--text-secondary);
+    --breadcrumbs-link-fg: var(--accent-text);
+    --breadcrumbs-bg: var(--surface-secondary);
+    --link-fg: var(--accent-text);
+    --link-hover-color: var(--text-heading);
+    --link-selected-fg: var(--accent-text);
+    --hairline-color: var(--border-color);
+    --error-fg: var(--danger-text);
+    --message-success-bg: var(--success-surface);
+    --message-warning-bg: var(--warning-surface);
+    --message-error-bg: var(--danger-surface);
+    --darkened-bg: var(--surface-secondary);
+    --selected-bg: var(--surface-hover);
+    --selected-row: var(--surface-selected);
+    --button-fg: var(--on-accent);
+    --button-bg: var(--accent-primary);
+    --button-hover-bg: var(--accent-hover);
+    --default-button-bg: var(--accent-primary);
+    --default-button-hover-bg: var(--accent-hover);
+    --close-button-bg: var(--surface-secondary);
+    --close-button-hover-bg: var(--surface-hover);
+    --delete-button-bg: var(--danger-solid);
+    --delete-button-hover-bg: #8f2932;
+    --object-tools-fg: var(--on-accent);
+    --object-tools-bg: var(--accent-primary);
+    --object-tools-hover-bg: var(--accent-hover);
+}
+#header { border-bottom: 1px solid var(--border-color); gap: 14px; flex-wrap: wrap; }
+.admin-appearance { display: inline-flex; align-items: center; gap: 12px; vertical-align: middle; margin-left: 12px; }
+#nav-sidebar, .module, #changelist-filter, .submit-row, .inline-group {
+    background: var(--surface-primary);
+    border-color: var(--border-color);
+}
+#nav-sidebar .current-model { background: var(--surface-selected); }
+#nav-sidebar .current-model a { color: var(--accent-text); font-weight: 700; }
+#nav-sidebar a:hover { background: var(--surface-hover); }
+#changelist .actions, #changelist .paginator, #changelist #toolbar { background: var(--surface-secondary); color: var(--text-primary); }
+input, textarea, select, .vTextField { background-color: var(--input-bg); color: var(--text-primary); border-color: var(--input-border); accent-color: var(--accent-primary); }
+input::placeholder, textarea::placeholder { color: var(--text-secondary); opacity: 1; }
+:is(input, select, textarea):disabled, :is(input, textarea)[readonly] { background: var(--disabled-bg); color: var(--disabled-text); }
+input[type="submit"], input[type="button"], .button { background: var(--accent-primary); color: var(--on-accent); }
+.deletelink, .submit-row a.deletelink { background: var(--danger-solid); color: var(--on-solid); }
+.submit-row a.closelink { color: var(--text-primary); }
+ul.messagelist li.success { color: var(--success-text); }
+ul.messagelist li.warning { color: var(--warning-text); }
+ul.messagelist li.error { color: var(--danger-text); }
+.calendarbox, .clockbox, .calendar, .calendar table, .calendar td, .timelist, .selector-available h2, .selector-chosen h2 {
+    background: var(--surface-primary); color: var(--text-primary); border-color: var(--border-color);
+}
+.calendar caption, .calendarbox h2, .clockbox h2, .calendar th, .calendar-shortcuts, .calendar-cancel, .selector .selector-filter {
+    background: var(--surface-secondary); color: var(--text-primary);
+}
+.calendar td a, .timelist a { color: var(--accent-text); }
+.calendar td.selected a, .calendar td a:hover, .timelist a:hover { background: var(--surface-selected); color: var(--text-primary); }
+.calendar td.nonday { background: var(--disabled-bg); }
+.calendar td.today a { background: var(--accent-subtle); color: var(--accent-text); }
+.select2-container--admin-autocomplete .select2-selection--single,
+.select2-container--admin-autocomplete .select2-selection--multiple,
+.select2-container--admin-autocomplete .select2-dropdown {
+    background: var(--input-bg); color: var(--text-primary); border-color: var(--input-border);
+}
+.select2-container--admin-autocomplete .select2-selection--single .select2-selection__rendered,
+.select2-container--admin-autocomplete .select2-selection__placeholder { color: var(--text-secondary); }
+.select2-container--admin-autocomplete .select2-results__option--highlighted[aria-selected],
+.select2-container--admin-autocomplete .select2-results__option[aria-selected="true"],
+.select2-container--admin-autocomplete .select2-selection__choice { background: var(--surface-selected); color: var(--text-primary); }
+.select2-container--admin-autocomplete .select2-search__field { background: var(--input-bg); color: var(--text-primary); }
+.related-widget-wrapper { max-width: 100%; }
+@media (max-width: 767px) {
+    #header .admin-appearance { justify-content: center; width: 100%; }
+    #header #user-tools { overflow-wrap: anywhere; }
+}

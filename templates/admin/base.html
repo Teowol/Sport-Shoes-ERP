@@ -1,0 +1,12 @@
+{% extends "admin/base.html" %}
+{% load static %}
+{% block dark-mode-vars %}
+    <script src="{% static 'js/theme.js' %}?v=1"></script>
+    <link rel="stylesheet" href="{% static 'css/language-toggle.css' %}?v=2">
+    <link rel="stylesheet" href="{% static 'css/theme.css' %}?v=1">
+    <link rel="stylesheet" href="{% static 'css/admin-theme.css' %}?v=1">
+{% endblock %}
+{% block extrabody %}
+    {{ block.super }}
+    {% if is_popup %}<div class="theme-control" data-theme-control>{% include "core/_theme_toggle.html" %}</div>{% endif %}
+{% endblock %}

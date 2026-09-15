@@ -6,3 +6,14 @@ db.sqlite3
 .env
 staticfiles/
 media/
+.local/
+.env.*
+!.env.example
+!.env.sample
+.ruff_cache/
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.log
+/FETCH_HEAD

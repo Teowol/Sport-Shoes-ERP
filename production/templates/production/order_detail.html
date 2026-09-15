@@ -1,12 +1,13 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ order.order_number }} - Üretim Emri Detayı</title><link rel="stylesheet" href="/static/css/erp-theme.css?v=3">
-</head>
-<body>
-    <div class="header">
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}{{ order.order_number }} - Üretim Emri Detayı{% endblock %}
+{% block page_class %}page-production-order-detail{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
+{% endblock %}
+{% block content %}
+<div class="header" data-theme-toolbar>
         <h1>Sneaker ERP - Üretim Yönetimi</h1>
         <div>
             <a href="{% url 'production:order_list' %}">Emir Listesi</a>
@@ -31,31 +32,31 @@
             <div class="action-bar">
                 <a href="{% url 'production:order_list' %}" class="btn btn-secondary">← Listeye Dön</a>
                 {% if "release" in available_actions %}
-                <form method="post" action="{% url 'production:order_action' order.pk 'release' %}" style="display:inline;">
+                <form method="post" action="{% url 'production:order_action' order.pk 'release' %}" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-release" onclick="return confirm('Bu emri serbest bırakmak istediğinize emin misiniz?')">Serbest Bırak</button>
                 </form>
                 {% endif %}
                 {% if "start" in available_actions %}
-                <form method="post" action="{% url 'production:order_action' order.pk 'start' %}" style="display:inline;">
+                <form method="post" action="{% url 'production:order_action' order.pk 'start' %}" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-start" onclick="return confirm('Üretime başlatmak istediğinize emin misiniz?')">Üretime Başlat</button>
                 </form>
                 {% endif %}
                 {% if "quality_check" in available_actions %}
-                <form method="post" action="{% url 'production:order_action' order.pk 'quality_check' %}" style="display:inline;">
+                <form method="post" action="{% url 'production:order_action' order.pk 'quality_check' %}" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-quality" onclick="return confirm('Kalite kontrole göndermek istediğinize emin misiniz?')">Kalite Kontrole Gönder</button>
                 </form>
                 {% endif %}
                 {% if "complete" in available_actions %}
-                <form method="post" action="{% url 'production:order_action' order.pk 'complete' %}" style="display:inline;">
+                <form method="post" action="{% url 'production:order_action' order.pk 'complete' %}" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-complete" onclick="return confirm('Üretimi tamamlamak ve mamul stoğa giriş yapmak istediğinize emin misiniz?')">Üretimi Tamamla</button>
                 </form>
                 {% endif %}
                 {% if "cancel" in available_actions %}
-                <form method="post" action="{% url 'production:order_action' order.pk 'cancel' %}" style="display:inline;">
+                <form method="post" action="{% url 'production:order_action' order.pk 'cancel' %}" style="display: inline;">
                     {% csrf_token %}
                     <button type="submit" class="btn btn-cancel" onclick="return confirm('Bu emri iptal etmek istediğinize emin misiniz? Bu işlem geri alınamaz.')">İptal Et</button>
                 </form>
@@ -143,7 +144,7 @@
                 <div class="info-item"><span class="info-label">Hesaplama Tarihi</span><span class="info-value">{{ cost_summary.calculation_date|date:"d.m.Y H:i" }}</span></div>
             </div>
             {% if cost_summary.calculation_note %}
-            <p style="margin-top:0.75rem; color:#666;">Not: {{ cost_summary.calculation_note }}</p>
+            <p style="margin-top: 0.75rem; color: var(--text-secondary);">Not: {{ cost_summary.calculation_note }}</p>
             {% endif %}
         </div>
         {% endif %}
@@ -151,7 +152,7 @@
         <div class="card">
             <h3 class="card-title">Hammadde ve Malzeme İhtiyaçları (BOM)</h3>
             {% if components %}
-            <table>
+            <div class="table-scroll" tabindex="0"><table>
                 <thead>
                     <tr>
                         <th>Bileşen Kodu</th>
@@ -180,7 +181,7 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table></div>
             {% else %}
             <div class="empty-state">
                 <p>Bu üretim emri için henüz malzeme kalemleri oluşturulmamış.</p>
@@ -191,7 +192,7 @@
         <div class="card">
             <h3 class="card-title">Operasyon Adımları (Rota)</h3>
             {% if operations %}
-            <table>
+            <div class="table-scroll" tabindex="0"><table>
                 <thead>
                     <tr>
                         <th>Sıra</th>
@@ -217,22 +218,22 @@
                         </td>
                         <td>
                             {% if op.status == "pending" %}
-                            <form method="post" action="{% url 'production:operation_action' op.pk 'start' %}" style="display:inline;">
+                            <form method="post" action="{% url 'production:operation_action' op.pk 'start' %}" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-start" onclick="return confirm('Operasyonu başlatmak istediğinize emin misiniz?')">Başlat</button>
                             </form>
                             {% elif op.status == "in_progress" %}
-                            <form method="post" action="{% url 'production:operation_action' op.pk 'pause' %}" style="display:inline;">
+                            <form method="post" action="{% url 'production:operation_action' op.pk 'pause' %}" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-secondary" onclick="return confirm('Operasyonu duraklatmak istediğinize emin misiniz?')">Duraklat</button>
                             </form>
-                            <form method="post" action="{% url 'production:operation_action' op.pk 'complete' %}" style="display:inline;">
+                            <form method="post" action="{% url 'production:operation_action' op.pk 'complete' %}" style="display: inline;">
                                 {% csrf_token %}
-                                <input type="number" step="0.001" name="completed_quantity" placeholder="Miktar" style="width:90px; padding:0.4rem; border-radius:6px; border:1px solid var(--border); margin-right:0.25rem;">
+                                <input type="number" step="0.001" name="completed_quantity" placeholder="Miktar" style="width: 90px; padding: 0.4rem; border-radius: 6px; border: 1px solid var(--border); margin-right: 0.25rem;">
                                 <button type="submit" class="btn btn-complete" onclick="return confirm('Operasyonu tamamlamak istediğinize emin misiniz?')">Tamamla</button>
                             </form>
                             {% elif op.status == "paused" %}
-                            <form method="post" action="{% url 'production:operation_action' op.pk 'resume' %}" style="display:inline;">
+                            <form method="post" action="{% url 'production:operation_action' op.pk 'resume' %}" style="display: inline;">
                                 {% csrf_token %}
                                 <button type="submit" class="btn btn-start" onclick="return confirm('Operasyonu devam ettirmek istediğinize emin misiniz?')">Devam Ettir</button>
                             </form>
@@ -243,7 +244,7 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table></div>
             {% else %}
             <div class="empty-state">
                 <p>Bu üretim emri için henüz operasyon adımları oluşturulmamış.</p>
@@ -254,7 +255,7 @@
         <div class="card">
             <h3 class="card-title">Kalite Kontrol Kayıtları</h3>
             {% if order.quality_checks.all %}
-            <table>
+            <div class="table-scroll" tabindex="0"><table>
                 <thead>
                     <tr>
                         <th>Tarih</th>
@@ -283,9 +284,9 @@
                         <td>{{ check.notes|default:"-" }}</td>
                         <td>
                             {% if order.status == "quality_check" or order.status == "in_progress" %}
-                            <form method="post" action="{% url 'quality:quality_check_delete' check.pk %}" style="display:inline;" onsubmit="return confirm('Bu kalite kaydını silmek istediğinize emin misiniz?')">
+                            <form method="post" action="{% url 'quality:quality_check_delete' check.pk %}" style="display: inline;" onsubmit="return confirm('Bu kalite kaydını silmek istediğinize emin misiniz?')">
                                 {% csrf_token %}
-                                <button type="submit" class="btn btn-cancel" style="padding:0.35rem 0.75rem; font-size:0.75rem;">Sil</button>
+                                <button type="submit" class="btn btn-cancel" style="padding: 0.35rem 0.75rem; font-size: 0.75rem;">Sil</button>
                             </form>
                             {% else %}
                             <span>-</span>
@@ -294,7 +295,7 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table></div>
             {% else %}
             <div class="empty-state">
                 <p>Henüz kalite kontrol kaydı bulunmuyor.</p>
@@ -307,40 +308,40 @@
             <h3 class="card-title">Yeni Kalite Kontrol Kaydı Ekle</h3>
             <form method="post" action="{% url 'quality:quality_check_create' order.pk %}">
                 {% csrf_token %}
-                <div class="info-grid" style="margin-bottom:1rem;">
+                <div class="info-grid" style="margin-bottom: 1rem;">
                     <div class="info-item">
                         <span class="info-label">Kontrol Edilen Miktar</span>
-                        <input type="number" step="0.001" name="checked_quantity" value="{{ order.planned_quantity }}" required style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;">
+                        <input type="number" step="0.001" name="checked_quantity" value="{{ order.planned_quantity }}" required style="padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; width: 100%;">
                     </div>
                     <div class="info-item">
                         <span class="info-label">Kabul Edilen Miktar</span>
-                        <input type="number" step="0.001" name="accepted_quantity" value="{{ order.planned_quantity }}" required style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;">
+                        <input type="number" step="0.001" name="accepted_quantity" value="{{ order.planned_quantity }}" required style="padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; width: 100%;">
                     </div>
                     <div class="info-item">
                         <span class="info-label">Reddedilen Miktar</span>
-                        <input type="number" step="0.001" name="rejected_quantity" value="0" required style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;">
+                        <input type="number" step="0.001" name="rejected_quantity" value="0" required style="padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; width: 100%;">
                     </div>
                     <div class="info-item">
                         <span class="info-label">Fire Miktarı</span>
-                        <input type="number" step="0.001" name="scrapped_quantity" value="0" required style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;">
+                        <input type="number" step="0.001" name="scrapped_quantity" value="0" required style="padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; width: 100%;">
                     </div>
                     <div class="info-item">
                         <span class="info-label">Sonuç</span>
-                        <select name="result" required style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;">
+                        <select name="result" required style="padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; width: 100%;">
                             {% for value, label in quality_result_choices %}
                             <option value="{{ value }}">{{ label }}</option>
                             {% endfor %}
                         </select>
                     </div>
                 </div>
-                <div class="info-grid" style="margin-bottom:1rem;">
+                <div class="info-grid" style="margin-bottom: 1rem;">
                     <div class="info-item">
                         <span class="info-label">Red / Fire Nedeni</span>
-                        <textarea name="rejection_reason" rows="2" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;"></textarea>
+                        <textarea name="rejection_reason" rows="2" style="padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; width: 100%;"></textarea>
                     </div>
                     <div class="info-item">
                         <span class="info-label">Kontrol Notları</span>
-                        <textarea name="notes" rows="2" style="padding:0.5rem; border:1px solid var(--border); border-radius:6px; width:100%;"></textarea>
+                        <textarea name="notes" rows="2" style="padding: 0.5rem; border: 1px solid var(--border); border-radius: 6px; width: 100%;"></textarea>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-start">Kalite Kontrol Kaydı Ekle</button>
@@ -348,5 +349,4 @@
         </div>
         {% endif %}
     </div>
-</body>
-</html>
+{% endblock %}

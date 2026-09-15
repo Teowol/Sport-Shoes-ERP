@@ -1,0 +1,23 @@
+* { box-sizing: border-box; }
+        body { margin: 0; background: var(--bg-gradient); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
+        header { display: flex; align-items: center; justify-content: space-between; padding: 16px 6%; color: var(--text-primary); background: var(--header-surface); }
+        header a { color: var(--accent-text); text-decoration: none; font-weight: 700; }
+        .brand { color: var(--text-primary); font-size: 20px; letter-spacing: 4px; }
+        .page { width: min(1000px, 92%); margin: 0 auto; padding: 32px 0 50px; }
+        h1 { color: var(--text-heading); font-size: 28px; margin: 0 0 22px; }
+        .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; background: var(--surface-primary); }
+        table { width: 100%; border-collapse: collapse; min-width: 700px; }
+        th, td { padding: 13px 14px; border-bottom: 1px solid var(--border); text-align: left; font-size: 14px; }
+        th { color: var(--muted); background: var(--surface-secondary); font-size: 12px; letter-spacing: .5px; text-transform: uppercase; }
+        tr:last-child td { border-bottom: 0; }
+        tr:hover td { background: var(--surface-hover); }
+        .link { color: var(--text-heading); text-decoration: none; font-weight: 700; }
+        .badge { display: inline-block; padding: 4px 9px; border-radius: 5px; font-size: 12px; font-weight: 700; }
+        .badge-draft { color: var(--warning-text); background: var(--warning-surface); }
+        .badge-confirmed { color: var(--success-text); background: var(--success-surface); }
+        .badge-in_production { color: var(--info-text); background: var(--info-surface); }
+        .badge-ready_to_ship { color: var(--quality-text); background: var(--quality-surface); }
+        .badge-shipped { color: var(--info-text); background: var(--info-surface); }
+        .badge-completed { color: var(--success-text); background: var(--success-surface); }
+        .badge-cancelled { color: var(--danger-text); background: var(--danger-surface); }
+        .empty { padding: 50px 20px; border: 1px dashed var(--border); border-radius: 10px; color: var(--muted); background: var(--surface-primary); text-align: center; }

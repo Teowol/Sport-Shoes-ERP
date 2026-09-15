@@ -1,24 +1,19 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Üretim Emirleri - Sneaker ERP</title><link rel="stylesheet" href="/static/css/erp-theme.css?v=3">
-<style>
-        .header.erp-navbar { min-height: 76px; padding: 14px 6%; background: #061a2d !important; border-bottom: 1px solid rgba(255, 255, 255, .08); }
-        .erp-navbar__content { display: flex; width: min(1400px, 100%); margin: 0 auto; align-items: center; justify-content: space-between; gap: 28px; }
-        .header .erp-navbar__brand { flex: 0 0 auto; margin: 0 !important; color: #e0c18d !important; font-size: 21px; font-weight: 700; letter-spacing: 5px; text-decoration: none; }
-        .erp-navbar__links { display: flex; align-items: center; justify-content: flex-end; gap: 4px 20px; flex-wrap: wrap; }
-        .header .erp-navbar__links a { margin: 0 !important; padding: 7px 0; color: #e0c18d !important; font-size: 14px; font-weight: 500; text-decoration: none; white-space: nowrap; transition: color .18s ease; }
-        .header .erp-navbar__links a:hover, .header .erp-navbar__links a:focus-visible { color: #ffffff !important; }
-        @media (max-width: 900px) { .header.erp-navbar { padding: 14px 4%; } .erp-navbar__content { align-items: flex-start; flex-direction: column; gap: 8px; } .erp-navbar__links { justify-content: flex-start; gap: 2px 16px; } }
-    </style>
-</head>
-<body>
-    <header class="header erp-navbar">
+{% extends "core/base.html" %}
+{% load static i18n %}
+
+{% block title %}Üretim Emirleri - Sneaker ERP{% endblock %}
+{% block page_class %}page-production-order-list{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
+
+
+    <link rel="stylesheet" href="{% static 'css/pages/production-order_list.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<header class="header erp-navbar">
         <div class="erp-navbar__content">
             <a class="erp-navbar__brand" href="{% url "home" %}">SPEEDERS</a>
-            <nav class="erp-navbar__links" aria-label="Ana menü">
+            <nav class="erp-navbar__links" aria-label="Ana menü" data-theme-toolbar>
                 <a href="{% url "portal" %}" class="portal-link">← Portal</a>
                 <a href="{% url "ai:chat_page" %}">Asistan</a>
                 <a href="{% url "inventory:stock_level_list" %}">Stok</a>
@@ -66,7 +61,7 @@
 
         <div class="table-card">
             {% if orders %}
-            <table>
+            <div class="table-scroll" tabindex="0"><table>
                 <thead>
                     <tr>
                         <th>Emir No</th>
@@ -101,7 +96,7 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table></div>
             {% else %}
             <div class="empty-state">
                 <p>Kriterlere uygun üretim emri bulunamadı.</p>
@@ -109,5 +104,4 @@
             {% endif %}
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

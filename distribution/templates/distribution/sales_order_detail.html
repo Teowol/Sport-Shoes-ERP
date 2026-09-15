@@ -1,13 +1,13 @@
-{% load dict_extras %}
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ order.order_number }} - Sipariş Detayı</title><link rel="stylesheet" href="/static/css/erp-theme.css?v=3">
-</head>
-<body>
-    <div class="header">
+{% extends "core/base.html" %}
+{% load static i18n dict_extras %}
+
+{% block title %}{{ order.order_number }} - Sipariş Detayı{% endblock %}
+{% block page_class %}page-distribution-sales-order-detail{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
+{% endblock %}
+{% block content %}
+<div class="header" data-theme-toolbar>
         <h1>Sneaker ERP - Satış</h1>
         <div>
             <a href="{% url 'distribution:sales_order_list' %}">Siparişler</a>
@@ -30,14 +30,14 @@
 
         <div class="actions">
             {% if order.status == "draft" %}
-            <a href="{% url 'distribution:sales_order_edit' order.pk %}" class="btn" style="background-color: var(--accent); color: #fff;">Siparişi Düzenle</a>
-            <form method="post" action="{% url 'distribution:sales_order_confirm' order.pk %}" style="display:inline;">
+            <a href="{% url 'distribution:sales_order_edit' order.pk %}" class="btn" style="background-color: var(--accent-primary); color: var(--on-accent);">Siparişi Düzenle</a>
+            <form method="post" action="{% url 'distribution:sales_order_confirm' order.pk %}" style="display: inline;">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-success" onclick="return confirm('Siparişi onaylayıp stok rezervasyonu yapmak istiyor musunuz?')">Onayla & Rezerve Et</button>
             </form>
             {% endif %}
             {% if order.status != "cancelled" and order.status != "shipped" and order.status != "completed" %}
-            <form method="post" action="{% url 'distribution:sales_order_cancel' order.pk %}" style="display:inline;">
+            <form method="post" action="{% url 'distribution:sales_order_cancel' order.pk %}" style="display: inline;">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-danger" onclick="return confirm('Siparişi iptal etmek istiyor musunuz? Rezervasyonlar kaldırılacak.')">İptal Et</button>
             </form>
@@ -69,7 +69,7 @@
                 </div>
             </div>
             {% if order.note %}
-            <div style="margin-top:1rem;">
+            <div style="margin-top: 1rem;">
                 <span class="info-label">Not</span>
                 <p>{{ order.note }}</p>
             </div>
@@ -78,7 +78,7 @@
 
         <div class="card">
             <h3 class="card-title">Sipariş Kalemleri</h3>
-            <table>
+            <div class="table-scroll" tabindex="0"><table>
                 <thead>
                     <tr>
                         <th>Ürün</th>
@@ -109,9 +109,9 @@
                         </td>
                         <td>
                             {% if order.status == "confirmed" or order.status == "in_production" %}
-                            <form method="post" action="{% url 'distribution:create_production_order_from_line' line.pk %}" style="display:inline;">
+                            <form method="post" action="{% url 'distribution:create_production_order_from_line' line.pk %}" style="display: inline;">
                                 {% csrf_token %}
-                                <button type="submit" class="btn" style="background-color:#6366f1; color:#fff; padding:0.35rem 0.6rem; font-size:0.75rem;" onclick="return confirm('Bu kalem için Reçete ve Rota bazlı Üretim Emri oluşturulsun mu?')">Üretim Emri Aç</button>
+                                <button type="submit" class="btn" style="background-color: var(--quality-solid); color: var(--on-solid); padding: 0.35rem 0.6rem; font-size: 0.75rem;" onclick="return confirm('Bu kalem için Reçete ve Rota bazlı Üretim Emri oluşturulsun mu?')">Üretim Emri Aç</button>
                             </form>
                             {% else %}
                             -
@@ -120,13 +120,13 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table></div>
         </div>
 
         {% if linked_production_orders %}
         <div class="card">
             <h3 class="card-title">Bağlı Üretim Emirleri</h3>
-            <table>
+            <div class="table-scroll" tabindex="0"><table>
                 <thead>
                     <tr>
                         <th>Emir No</th>
@@ -139,7 +139,7 @@
                 <tbody>
                     {% for po in linked_production_orders %}
                     <tr>
-                        <td><a href="{% url 'production:order_detail' po.pk %}" style="color:var(--accent); text-decoration:none; font-weight:600;">{{ po.order_number }}</a></td>
+                        <td><a href="{% url 'production:order_detail' po.pk %}" style="color: var(--accent-text); text-decoration: none; font-weight: 600;">{{ po.order_number }}</a></td>
                         <td>{{ po.product.name }}</td>
                         <td>{{ po.get_status_display }}</td>
                         <td>{{ po.planned_quantity }}</td>
@@ -147,9 +147,8 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-            </table>
+            </table></div>
         </div>
         {% endif %}
     </div>
-</body>
-</html>
+{% endblock %}
