@@ -75,7 +75,7 @@ class DocumentValidationTests(DocumentTestBase):
         for index, upload in enumerate(uploads):
             with self.subTest(filename=upload.name):
                 document = self.create_document(upload=upload, title=f"Belge {index}")
-                self.assertEqual(document.status, Document.Status.UPLOADED)
+                self.assertEqual(document.status, Document.Status.QUEUED)
                 self.assertEqual(document.processing_error, "")
                 self.assertTrue(document.file.storage.exists(document.file.name))
 

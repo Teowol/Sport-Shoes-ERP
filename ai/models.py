@@ -23,6 +23,7 @@ class Document(models.Model):
     """A validated, privately stored source document for the future RAG layer."""
 
     class Status(models.TextChoices):
+        QUEUED = "queued", "Kuyrukta"
         UPLOADED = "uploaded", "Yüklendi"
         PROCESSING = "processing", "İşleniyor"
         READY = "ready", "Hazır"
@@ -43,7 +44,7 @@ class Document(models.Model):
     status = models.CharField(
         max_length=20,
         choices=Status.choices,
-        default=Status.UPLOADED,
+        default=Status.QUEUED,
         editable=False,
         verbose_name="Durum",
     )
@@ -84,6 +85,50 @@ class Document(models.Model):
         if self.file and (not self.pk or not getattr(self.file, "_committed", True) or not self.checksum_sha256):
             self.full_clean()
         return super().save(*args, **kwargs)
+
+
+class DocumentChunk(models.Model):
+    """A normalized, ordered section of a private source document."""
+
+    document = models.ForeignKey(
+        Document,
+        on_delete=models.CASCADE,
+        related_name="chunks",
+        verbose_name="Doküman",
+    )
+    chunk_index = models.PositiveIntegerField(verbose_name="Parça Sırası")
+    content = models.TextField(verbose_name="İçerik")
+    token_count = models.PositiveIntegerField(verbose_name="Token Sayısı")
+    page_number = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="Sayfa Numarası",
+    )
+    section_title = models.CharField(
+        max_length=255,
+        blank=True,
+        verbose_name="Bölüm Başlığı",
+    )
+    content_hash = models.CharField(max_length=64, verbose_name="İçerik SHA-256")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Oluşturulma Tarihi")
+
+    class Meta:
+        ordering = ["document_id", "chunk_index"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=("document", "chunk_index"),
+                name="uniq_ai_document_chunk_index",
+            ),
+            models.UniqueConstraint(
+                fields=("document", "content_hash"),
+                name="uniq_ai_document_chunk_content_hash",
+            ),
+        ]
+        verbose_name = "AI Doküman Parçası"
+        verbose_name_plural = "AI Doküman Parçaları"
+
+    def __str__(self):
+        return f"{self.document} / {self.chunk_index}"
 
 
 @receiver(post_delete, sender=Document)

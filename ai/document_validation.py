@@ -22,6 +22,7 @@ ALLOWED_DOCUMENT_TYPES = {
     ".txt": {"text/plain"},
 }
 DOCX_REQUIRED_MEMBERS = {"[Content_Types].xml", "word/document.xml"}
+DOCX_FORBIDDEN_MEMBER_SUFFIXES = ("vbaproject.bin", "vbadata.xml")
 MAX_DOCX_UNCOMPRESSED_BYTES = 100 * 1024 * 1024
 MAX_DOCX_COMPRESSION_RATIO = 100
 MIN_DOCX_UNCOMPRESSED_ALLOWANCE = 5 * 1024 * 1024
@@ -98,28 +99,43 @@ def _validate_pdf(upload) -> None:
         _rewind(upload)
 
 
+def validate_docx_archive(archive: zipfile.ZipFile, file_size: int) -> None:
+    """Reject malformed, encrypted, macro-enabled, or suspicious DOCX archives."""
+    members = archive.infolist()
+    member_names = {member.filename for member in members}
+    if not DOCX_REQUIRED_MEMBERS.issubset(member_names):
+        raise ValidationError("Dosya geçerli bir DOCX belgesi değil.")
+    if any(member.flag_bits & 0x1 for member in members):
+        raise ValidationError("Şifreli DOCX dosyaları desteklenmiyor.")
+    if any(
+        member.filename.lower().endswith(DOCX_FORBIDDEN_MEMBER_SUFFIXES)
+        for member in members
+    ):
+        raise ValidationError("Makrolu Office dosyaları desteklenmiyor.")
+
+    content_types = archive.read("[Content_Types].xml").lower()
+    if b"macroenabled" in content_types or b"vba" in content_types:
+        raise ValidationError("Makrolu Office dosyaları desteklenmiyor.")
+
+    uncompressed_size = sum(member.file_size for member in members)
+    allowed_uncompressed_size = min(
+        MAX_DOCX_UNCOMPRESSED_BYTES,
+        max(
+            file_size * MAX_DOCX_COMPRESSION_RATIO,
+            MIN_DOCX_UNCOMPRESSED_ALLOWANCE,
+        ),
+    )
+    if uncompressed_size > allowed_uncompressed_size:
+        raise ValidationError("DOCX sıkıştırılmış içeriği güvenli sınırı aşıyor.")
+
+
 def _validate_docx(upload, file_size: int) -> None:
     if _read_bytes(upload, 4) not in {b"PK\x03\x04", b"PK\x05\x06", b"PK\x07\x08"}:
         raise ValidationError("DOCX dosya imzası geçersiz.")
     try:
         _rewind(upload)
         with zipfile.ZipFile(upload) as archive:
-            members = archive.infolist()
-            member_names = {member.filename for member in members}
-            if not DOCX_REQUIRED_MEMBERS.issubset(member_names):
-                raise ValidationError("Dosya geçerli bir DOCX belgesi değil.")
-            if any(member.flag_bits & 0x1 for member in members):
-                raise ValidationError("Şifreli DOCX dosyaları desteklenmiyor.")
-            uncompressed_size = sum(member.file_size for member in members)
-            allowed_uncompressed_size = min(
-                MAX_DOCX_UNCOMPRESSED_BYTES,
-                max(
-                    file_size * MAX_DOCX_COMPRESSION_RATIO,
-                    MIN_DOCX_UNCOMPRESSED_ALLOWANCE,
-                ),
-            )
-            if uncompressed_size > allowed_uncompressed_size:
-                raise ValidationError("DOCX sıkıştırılmış içeriği güvenli sınırı aşıyor.")
+            validate_docx_archive(archive, file_size)
         _rewind(upload)
         DocxDocument(upload)
     except ValidationError:

@@ -15,3 +15,7 @@ qrcode==8.2
 python-barcode==0.16.1
 pypdf==6.16.2
 python-docx==1.2.0
+tiktoken==0.14.0
+fastembed==0.8.0
+onnxruntime==1.29.0
+numpy==1.26.4

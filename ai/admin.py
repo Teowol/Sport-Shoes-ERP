@@ -6,6 +6,7 @@ from django.utils.html import format_html
 from .forms import DocumentAdminForm
 from .models import Document
 from .permissions import can_manage_documents
+from .signals import dispatch_document_processing
 
 
 @admin.register(Document)
@@ -23,6 +24,29 @@ class DocumentAdmin(admin.ModelAdmin):
     search_fields = ("title", "original_filename", "checksum_sha256")
     ordering = ("-created_at",)
     date_hierarchy = "created_at"
+    actions = ("queue_for_reprocessing",)
+
+    @admin.action(description="Seçili dokümanları yeniden işle")
+    def queue_for_reprocessing(self, request, queryset):
+        if not can_manage_documents(request.user):
+            raise PermissionDenied
+        public_ids = list(
+            queryset.exclude(status=Document.Status.PROCESSING).values_list(
+                "public_id", flat=True
+            )
+        )
+        if not public_ids:
+            self.message_user(request, "İşleme alınabilecek doküman bulunamadı.")
+            return
+        Document.objects.filter(public_id__in=public_ids).update(
+            status=Document.Status.QUEUED,
+            processing_error="",
+        )
+        dispatch_document_processing(public_ids)
+        self.message_user(
+            request,
+            f"{len(public_ids)} doküman işleme kuyruğuna alındı.",
+        )
 
     def get_fields(self, request, obj=None):
         if obj is None:

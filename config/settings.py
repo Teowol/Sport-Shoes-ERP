@@ -10,7 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+# ONNX Runtime telemetry must be disabled before any embedding-related import.
+os.environ["ORT_DISABLE_TELEMETRY"] = "1"
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -193,6 +197,34 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 AI_DOCUMENT_MAX_SIZE_BYTES = env.int("AI_DOCUMENT_MAX_SIZE_BYTES", default=10 * 1024 * 1024)
+AI_DOCUMENT_TOKEN_ENCODING = env("AI_DOCUMENT_TOKEN_ENCODING", default="cl100k_base")
+AI_DOCUMENT_CHUNK_TARGET_TOKENS = env.int("AI_DOCUMENT_CHUNK_TARGET_TOKENS", default=700)
+AI_DOCUMENT_CHUNK_MAX_TOKENS = env.int("AI_DOCUMENT_CHUNK_MAX_TOKENS", default=800)
+AI_DOCUMENT_CHUNK_OVERLAP_TOKENS = env.int("AI_DOCUMENT_CHUNK_OVERLAP_TOKENS", default=120)
+AI_DOCUMENT_EMBEDDING_INPUT_LIMIT_TOKENS = env.int(
+    "AI_DOCUMENT_EMBEDDING_INPUT_LIMIT_TOKENS",
+    default=8192,
+)
+
+AI_EMBEDDING_PROVIDER = env("AI_EMBEDDING_PROVIDER", default="local_fastembed")
+AI_EMBEDDING_MODEL_ID = env(
+    "AI_EMBEDDING_MODEL_ID", default="intfloat/multilingual-e5-small"
+)
+AI_EMBEDDING_MODEL_REVISION = env(
+    "AI_EMBEDDING_MODEL_REVISION",
+    default="614241f622f53c4eeff9890bdc4f31cfecc418b3",
+)
+AI_EMBEDDING_MODEL_PATH = env(
+    "AI_EMBEDDING_MODEL_PATH",
+    default="/var/lib/erp/ai-models/intfloat-multilingual-e5-small/614241f622f53c4eeff9890bdc4f31cfecc418b3",
+)
+AI_EMBEDDING_DIMENSION = env.int("AI_EMBEDDING_DIMENSION", default=384)
+AI_EMBEDDING_BATCH_SIZE = env.int("AI_EMBEDDING_BATCH_SIZE", default=4)
+AI_EMBEDDING_THREADS = env.int("AI_EMBEDDING_THREADS", default=1)
+AI_EMBEDDING_OFFLINE = env.bool("AI_EMBEDDING_OFFLINE", default=True)
+AI_EMBEDDING_MAX_MODEL_TOKENS = env.int(
+    "AI_EMBEDDING_MAX_MODEL_TOKENS", default=512
+)
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
