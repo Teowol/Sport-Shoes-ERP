@@ -16,8 +16,8 @@ Kod değişikliklerinden sonra `stop` ve `start` çalıştırın.
 
 ## Kurulan bileşenler
 
-- Python 3.12 sanal ortamı: `.venv`. `requirements-dev.txt` ve içerdiği
-  `requirements.txt` bağımlılıkları kuruldu.
+- Python 3.12 sanal ortamı: `.venv`. Uygulama ve geliştirme bağımlılıkları
+  `requirements.txt` dosyasından kurulur.
 - PostgreSQL 16.15: `127.0.0.1:55432`. Veriler `.local/pgdata` içinde saklanır.
 - Redis uyumlu Memurai Developer 4.1.2: `127.0.0.1:56379`.
   Veriler `.local/redis-data` içindedir.

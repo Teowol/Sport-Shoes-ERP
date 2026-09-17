@@ -92,7 +92,7 @@ try {
     if ($LASTEXITCODE -ne 0) { throw 'Database migrations failed.' }
     Start-LocalProcess 'worker' $pythonPath @('-m', 'celery', '-A', 'config', 'worker', '--pool=solo', '--loglevel=INFO', '--hostname=erp-local@%h')
     Start-LocalProcess 'beat' $pythonPath @('-m', 'celery', '-A', 'config', 'beat', '--loglevel=INFO', '--pidfile=')
-    Start-LocalProcess 'web' $pythonPath @('manage.py', 'runserver', '127.0.0.1:8000', '--noreload')
+    Start-LocalProcess 'web' $pythonPath @('manage.py', 'runserver', '0.0.0.0:8000', '--noreload')
     $ready = $false
     for ($attempt = 0; $attempt -lt 30; $attempt++) {
         try {

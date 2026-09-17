@@ -19,3 +19,7 @@ tiktoken==0.14.0
 fastembed==0.8.0
 onnxruntime==1.29.0
 numpy==1.26.4
+bandit==1.9.4
+coverage==7.16.0
+pip-audit==2.10.1
+ruff==0.16.5
