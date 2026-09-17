@@ -150,10 +150,14 @@ class DocumentAccessTests(DocumentTestBase):
         self.assertEqual(staff_response["X-Content-Type-Options"], "nosniff")
 
         self.client.force_login(self.superuser)
-        self.assertEqual(self.client.get(download_url).status_code, 200)
+        superuser_response = self.client.get(download_url)
+        self.assertEqual(superuser_response.status_code, 200)
+        self.assertEqual(b"".join(superuser_response.streaming_content), b"Guvenli UTF-8 dokumani")
 
         self.client.force_login(self.factory_user)
-        self.assertEqual(self.client.get(download_url).status_code, 200)
+        factory_response = self.client.get(download_url)
+        self.assertEqual(factory_response.status_code, 200)
+        self.assertEqual(b"".join(factory_response.streaming_content), b"Guvenli UTF-8 dokumani")
 
         self.client.force_login(self.buyer_staff)
         self.assertEqual(self.client.get(download_url).status_code, 403)

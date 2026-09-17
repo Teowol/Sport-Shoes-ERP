@@ -267,7 +267,7 @@ class LocalEmbeddingServiceTests(SimpleTestCase):
         self.assertEqual(captured["load"]["providers"], ["CPUExecutionProvider"])
         self.assertEqual(
             captured["load"]["specific_model_path"],
-            "/tmp/test-local-embedding-model",
+            str(Path("/tmp/test-local-embedding-model")),
         )
         self.assertEqual(captured["load"]["threads"], 1)
         self.assertEqual(captured["registration"]["dim"], 384)

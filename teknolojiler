@@ -23,3 +23,62 @@
 - Vector Databases
 - Function Calling
 - LLM Agents
+
+Ek teknolojiler ve araçlar
+
+Backend ve Python bağımlılıkları
+- Gunicorn (WSGI uygulama sunucusu)
+- WSGI / ASGI (Django uygulama giriş noktaları; Docker'da WSGI kullanılıyor)
+- asgiref (Django'nun ASGI yardımcı bağımlılığı)
+- django-environ (ortam değişkenleri ve .env yapılandırması)
+- psycopg2-binary (PostgreSQL bağlantı sürücüsü)
+- redis-py (Redis Python istemcisi; paket adı: redis)
+- django-celery-beat (veritabanı tabanlı periyodik görev zamanlayıcısı)
+- django-celery-results (Celery görev sonuçlarının veritabanında saklanması)
+- sqlparse (Django'nun SQL ayrıştırma bağımlılığı)
+- sentry-sdk (Django ve Celery hata izleme entegrasyonu)
+- OpenAI Python SDK (OpenAI API istemcisi; paket adı: openai)
+- Django ORM ve Migrations (veri modelleri ve şema yönetimi)
+- Django Admin (yönetim arayüzü)
+- Django Authentication / Sessions (kimlik doğrulama, oturum ve yetki yönetimi)
+- Django i18n (Türkçe / İngilizce dil desteği)
+- SMTP / Django Email Backend (e-posta gönderimi)
+
+Doküman, PDF ve barkod işlemleri
+- ReportLab (PDF ve fatura oluşturma)
+- pypdf (PDF metni çıkarma)
+- python-docx (DOCX metni çıkarma)
+- qrcode (QR kod üretimi)
+- python-barcode (Code 128 barkod üretimi)
+- SVG (barkod ve QR kod görselleri)
+- DejaVu Sans (PDF çıktılarında kullanılan yazı tipi)
+
+Yerel embedding ve metin işleme
+- tiktoken (token sayımı ve doküman parçalama)
+- FastEmbed (yerel embedding altyapısı)
+- ONNX Runtime (yerel modelin CPU üzerinde çalıştırılması)
+- NumPy (vektör işlemleri ve normalizasyon)
+- Hugging Face Tokenizers (yerel modelin tokenizer'ı; paket adı: tokenizers)
+- multilingual-e5-small (intfloat çok dilli embedding modeli)
+  Not: Yerel embedding servisi mevcut; doküman işleme ve sohbet akışına entegrasyonu henüz tamamlanmamış.
+
+Tarayıcı API'leri
+- Fetch API (sohbet arayüzünden sunucuya istek gönderimi)
+- Web Storage / localStorage (tema tercihinin saklanması)
+
+Altyapı ve yerel geliştirme
+- Docker Compose (uygulama ve altyapı servislerinin tanımlanması)
+- Prometheus Node Exporter (sunucu metriklerinin toplanması)
+- Memurai (Windows yerel geliştirmede Redis uyumlu servis)
+- PowerShell (yerel servis başlatma, durdurma ve durum kontrolü)
+- pip (Python bağımlılık yönetimi)
+- Python venv (yerel sanal ortam)
+
+Test, kalite ve CI/CD
+- GitHub Actions (otomatik kontrol ve test iş akışı)
+- GitHub Dependabot (bağımlılık güncelleme yapılandırması)
+- Django Test Framework / unittest / unittest.mock (test ve taklit bağımlılıklar)
+- Coverage.py (test kapsamı ölçümü; paket adı: coverage)
+- Ruff (statik kod analizi)
+- Bandit (Python güvenlik analizi)
+- pip-audit (bağımlılık güvenlik denetimi)

@@ -19,6 +19,8 @@ Kod değişikliklerinden sonra `stop` ve `start` çalıştırın.
 - Python 3.12 sanal ortamı: `.venv`. Uygulama ve geliştirme bağımlılıkları
   `requirements.txt` dosyasından kurulur.
 - PostgreSQL 16.15: `127.0.0.1:55432`. Veriler `.local/pgdata` içinde saklanır.
+- pgvector 0.8.6: native PostgreSQL 16.15 için derlenen `vector` uzantısı.
+  Python/Django entegrasyonu `pgvector==0.5.0` paketini kullanır.
 - Redis uyumlu Memurai Developer 4.1.2: `127.0.0.1:56379`.
   Veriler `.local/redis-data` içindedir.
 - Django geliştirme sunucusu, Windows için `solo` havuzuyla Celery worker ve Celery beat.
@@ -48,3 +50,30 @@ $env:DJANGO_SETTINGS_MODULE = 'config.settings_local'
 $env:PYTHONUTF8 = '1'
 .\.venv\Scripts\python.exe manage.py check
 ```
+
+## pgvector kurulumu ve doğrulama
+
+`ai.0003_enable_vector` migration'ı veritabanında `vector` uzantısını etkinleştirir.
+Migration'dan önce PostgreSQL kurulumunda `lib/vector.dll`,
+`share/extension/vector.control` ve uzantının SQL dosyaları bulunmalıdır.
+Yalnızca Python paketini kurmak PostgreSQL uzantısını kurmaz.
+
+Bu makinede pgvector 0.8.6 resmî kaynak kodundan, Visual Studio 2022 x64 C++
+araçları ve PostgreSQL 16.15 arşivindeki aynı sürüme ait başlık/kütüphanelerle
+derlendi. Derleme sırasında `PGROOT`, projenin `.local/pgsql` klasörüdür.
+Yeni kurulumlarda [pgvector Windows yönergelerini](https://github.com/pgvector/pgvector#windows)
+izleyin; mevcut veritabanını değiştirmeden önce yedek alın ve geri yüklemeyi doğrulayın.
+
+Yerel ayarlarla migration ve uzantı testleri:
+
+```powershell
+$env:DJANGO_SETTINGS_MODULE = 'config.settings_local'
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe manage.py migrate
+.\.venv\Scripts\python.exe manage.py test ai.test_pgvector --noinput
+```
+
+Adım 1 yedeği ve veri karşılaştırma raporları Git dışında `.local/backups` altında
+tutulur. Yedekler ve `globals.sql` hassas veriler içerir; paylaşmayın veya Git'e eklemeyin.
+GitHub Actions test veritabanı da uzantıyı içeren `pgvector/pgvector:0.8.6-pg16`
+image'ını kullanır. Bu migration dokümanlara henüz embedding alanı eklemez.

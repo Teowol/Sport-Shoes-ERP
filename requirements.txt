@@ -3,6 +3,7 @@ Django==5.2.12
 django-environ==0.14.0
 gunicorn==26.1.0
 psycopg2-binary==2.9.12
+pgvector==0.5.0
 redis==8.1.0
 celery==5.6.2
 django-celery-beat==2.9.0
