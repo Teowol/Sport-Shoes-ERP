@@ -56,7 +56,7 @@ jobs:
 
     steps:
       - name: Kodu al
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Python kur
         uses: actions/setup-python@v5
