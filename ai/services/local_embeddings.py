@@ -8,6 +8,7 @@ import math
 import os
 import threading
 from dataclasses import dataclass
+from importlib.metadata import version
 from pathlib import Path
 from typing import Sequence
 
@@ -72,6 +73,56 @@ _backend_registration_lock = threading.Lock()
 _registered_backend_models: set[str] = set()
 
 
+@dataclass(frozen=True)
+class EmbeddingProfile:
+    model_id: str
+    revision: str
+    dimensions: int
+    profile_hash: str
+
+
+def get_embedding_profile() -> EmbeddingProfile:
+    """Describe compatible vectors without loading model files or inference."""
+    model_id = settings.AI_EMBEDDING_MODEL_ID
+    revision = settings.AI_EMBEDDING_MODEL_REVISION
+    approved = APPROVED_MODELS.get((model_id, revision))
+    if (
+        approved is None
+        or settings.AI_EMBEDDING_PROVIDER != "local_fastembed"
+        or not settings.AI_EMBEDDING_OFFLINE
+        or settings.AI_EMBEDDING_DIMENSION != approved.dimension
+        or settings.AI_EMBEDDING_MAX_MODEL_TOKENS != approved.max_tokens
+    ):
+        raise LocalEmbeddingConfigurationError("Unsupported embedding profile.")
+    # Increment algorithm_version if text cleaning, pooling, or window
+    # aggregation changes. Paths, batch sizes and thread counts are not part
+    # of vector compatibility, so producers do not need the model files.
+    description = {
+        "algorithm_version": 1,
+        "provider": settings.AI_EMBEDDING_PROVIDER,
+        "model_id": model_id,
+        "revision": revision,
+        "dimensions": approved.dimension,
+        "artifacts": approved.checksums,
+        "max_model_tokens": approved.max_tokens,
+        "query_prefix": QUERY_PREFIX,
+        "passage_prefix": PASSAGE_PREFIX,
+        "window_tokens": WINDOW_CONTENT_TOKENS,
+        "window_overlap": WINDOW_OVERLAP_TOKENS,
+        "pooling": "mean",
+        "aggregation": "overlap_weighted_mean_l2_float32",
+        "execution_provider": "CPUExecutionProvider",
+        "runtime_versions": {
+            package: version(package)
+            for package in ("fastembed", "onnxruntime", "tokenizers", "numpy")
+        },
+    }
+    digest = hashlib.sha256(
+        json.dumps(description, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    return EmbeddingProfile(model_id, revision, approved.dimension, digest)
+
+
 class LocalEmbeddingService:
     """Generate normalized E5 embeddings without network or OpenAI access."""
 
@@ -87,6 +138,7 @@ class LocalEmbeddingService:
         self._inference_lock = threading.Lock()
 
         self._approved_model = self._validate_configuration()
+        self.profile = get_embedding_profile()
         self.model_path = self._validate_model_path()
         self._tokenizer = self._load_raw_tokenizer()
         self._backend = self._create_backend()

@@ -48,7 +48,7 @@ function Stop-LocalProcessTree([int]$ProcessId) {
 Push-Location $projectRoot
 try {
     if ($Action -eq 'stop') {
-        foreach ($name in @('web', 'beat', 'worker')) {
+        foreach ($name in @('web', 'beat', 'worker', 'embeddings')) {
             $running = Get-LocalProcess $name
             if ($running) { Stop-LocalProcessTree $running.ProcessId }
         }
@@ -67,7 +67,7 @@ try {
 
     if ($Action -eq 'status') {
         & $pgCtlPath -D $pgDataPath status
-        foreach ($name in @('redis', 'worker', 'beat', 'web')) {
+        foreach ($name in @('redis', 'worker', 'embeddings', 'beat', 'web')) {
             $running = Get-LocalProcess $name
             Write-Host "$name running: $([bool]$running)"
         }
@@ -90,7 +90,8 @@ try {
     if (-not $redisReady) { throw 'Redis could not be started. Check .local logs.' }
     & $pythonPath manage.py migrate --noinput
     if ($LASTEXITCODE -ne 0) { throw 'Database migrations failed.' }
-    Start-LocalProcess 'worker' $pythonPath @('-m', 'celery', '-A', 'config', 'worker', '--pool=solo', '--loglevel=INFO', '--hostname=erp-local@%h')
+    Start-LocalProcess 'worker' $pythonPath @('-m', 'celery', '-A', 'config', 'worker', '--pool=solo', '--concurrency=1', '--queues=celery', '--loglevel=INFO', '--hostname=erp-local@%h')
+    Start-LocalProcess 'embeddings' $pythonPath @('-m', 'celery', '-A', 'config', 'worker', '--pool=solo', '--concurrency=1', '--queues=embeddings', '--prefetch-multiplier=1', '--loglevel=INFO', '--hostname=erp-embeddings@%h')
     Start-LocalProcess 'beat' $pythonPath @('-m', 'celery', '-A', 'config', 'beat', '--loglevel=INFO', '--pidfile=')
     Start-LocalProcess 'web' $pythonPath @('manage.py', 'runserver', '0.0.0.0:8000', '--noreload')
     $ready = $false
@@ -101,7 +102,7 @@ try {
         } catch { Start-Sleep -Seconds 1 }
     }
     if (-not $ready) { throw 'Web server did not become ready. Check .local/web.err.log.' }
-    foreach ($name in @('redis', 'worker', 'beat', 'web')) {
+    foreach ($name in @('redis', 'worker', 'embeddings', 'beat', 'web')) {
         if (-not (Get-LocalProcess $name)) { throw "$name exited. Check .local/$name.err.log." }
     }
     Write-Host 'ERP is ready: http://127.0.0.1:8000/'

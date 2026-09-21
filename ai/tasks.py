@@ -1,12 +1,25 @@
 """Celery tasks for private AI document processing."""
 
 import logging
+from functools import partial
 
 from celery import shared_task
 from django.db import OperationalError, transaction
 
 from .models import Document, DocumentChunk
 from .services.document_processing import build_document_chunks
+from .services.embedding_pipeline import (
+    EMBEDDINGS_QUEUE,
+    chunk_generation,
+    dispatch_document_embeddings,
+    embed_document,
+    record_embedding_error,
+)
+from .services.local_embeddings import (
+    LocalEmbeddingConfigurationError,
+    LocalEmbeddingError,
+    LocalEmbeddingInputError,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -63,6 +76,10 @@ def process_document(self, public_id: str):
             locked_document.status = Document.Status.READY
             locked_document.processing_error = ""
             locked_document.save(update_fields=("status", "processing_error", "updated_at"))
+            generation = chunk_generation(locked_document)
+            transaction.on_commit(
+                partial(dispatch_document_embeddings, str(locked_document.public_id), generation)
+            )
         return {"status": "ready", "chunk_count": len(chunk_data)}
     except Document.DoesNotExist:
         return {"status": "deleted"}
@@ -99,3 +116,41 @@ def process_document(self, public_id: str):
             processing_error=_admin_error(exc),
         )
         return {"status": "failed"}
+
+
+@shared_task(
+    bind=True,
+    queue=EMBEDDINGS_QUEUE,
+    max_retries=2,
+    acks_late=True,
+    reject_on_worker_lost=True,
+)
+def embed_document_chunks(self, public_id: str, generation: str, expected_profile_hash: str):
+    """Run local inference only on the embeddings queue, with bounded retries."""
+    try:
+        if (
+            not self.request.called_directly
+            and not self.request.is_eager
+            and (self.request.delivery_info or {}).get("routing_key") != EMBEDDINGS_QUEUE
+        ):
+            raise LocalEmbeddingConfigurationError("Embedding task delivered to the wrong queue.")
+        return embed_document(public_id, generation, expected_profile_hash)
+    except (LocalEmbeddingConfigurationError, LocalEmbeddingInputError):
+        _record_embedding_task_error(public_id, generation, "Profil, model veya içerik doğrulaması başarısız.")
+        raise
+    except (LocalEmbeddingError, OperationalError, OSError) as exc:
+        _record_embedding_task_error(public_id, generation, "İşleme tamamlanamadı; sınırlı yeniden deneme.")
+        if self.request.retries >= self.max_retries:
+            _record_embedding_task_error(public_id, generation, "Yeniden deneme sınırına ulaşıldı.")
+            raise
+        raise self.retry(exc=exc, countdown=2 ** (self.request.retries + 1))
+    except Exception:
+        _record_embedding_task_error(public_id, generation, "Beklenmeyen işleme hatası.")
+        raise
+
+
+def _record_embedding_task_error(public_id, generation, message):
+    try:
+        record_embedding_error(public_id, generation, message)
+    except Exception:
+        logger.exception("Could not record embedding task failure for %s", public_id)

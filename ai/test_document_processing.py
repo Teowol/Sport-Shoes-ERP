@@ -406,7 +406,7 @@ class ConcurrentDocumentTaskTests(TransactionTestCase):
                 close_old_connections()
 
         with patch("ai.tasks.build_document_chunks", side_effect=blocking_builder):
-            with ThreadPoolExecutor(max_workers=2) as executor:
+            with patch("ai.tasks.dispatch_document_embeddings"), ThreadPoolExecutor(max_workers=2) as executor:
                 first = executor.submit(run_task)
                 self.assertTrue(started.wait(timeout=10))
                 second = executor.submit(run_task)

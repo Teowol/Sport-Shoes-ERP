@@ -261,6 +261,11 @@ CELERY_TIMEZONE = TIME_ZONE
 
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 
+CELERY_TASK_ROUTES = {
+    "ai.tasks.process_document": {"queue": "celery"},
+    "ai.tasks.embed_document_chunks": {"queue": "embeddings"},
+}
+
 # Şirket / Fatura Bilgileri
 COMPANY_NAME = env("COMPANY_NAME", default="")
 COMPANY_ADDRESS = env("COMPANY_ADDRESS", default="")
