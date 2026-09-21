@@ -148,3 +148,36 @@ Broker/veritabanı hatası veya mevcut vektörlerde profil uyuşmazlığı komut
 durdurur; önceki gönderimler geri alınmaz. Uyuşmayan vektörler otomatik silinmez
 veya dönüştürülmez. Yeni yüklenen dokümanlar normal pipeline ile işlenir;
 tarama sırasında yeniden işlenen kayıtlar gerekirse sonraki komutla tekrar taranır.
+
+## Dokümanlarda anlamsal arama (Adım 5)
+
+`ai.tools.search_documents(user, query, limit=5)` salt-okuma aracıdır. En fazla
+10 chunk döndürür; pozitif tam sayı olan daha büyük limitler 10'a indirilir.
+Sorgu en fazla 2000 karakter olabilir; yerel servisin 512 token sınırı da geçerlidir.
+Boş sorgu veya uygun embedding bulunmaması başarılı, boş sonuç verir.
+
+Erişim mevcut özel doküman kuralına dayanır: aktif superuser, Buyer grubunda
+olmayan staff veya FactoryOwner erişebilir. Buyer + staff / FactoryOwner
+birleşimleri engellenir; superuser istisnası korunur. Anonim, pasif ve rolü
+olmayan kullanıcılar engellenir. `uploaded_by` bir sahiplik/erişim alanı değildir;
+yetkili kullanıcılar tüm hazır dokümanlarda arama yapabilir. Modelde doküman
+bazında paylaşım alanı bulunmadığı için müşterilere doküman erişimi açılmaz.
+
+SQL sorgusu sıralama ve limitten önce doküman durumunu (`ready`), dolu vektörü
+ve model/boyut/profil uyumunu filtreler. Yerel `embed_query` servisi `query: `
+önekini kendisi ekler; sorgu embedding'i kaydedilmez. Arama çağrısını yapan
+süreç, uygun chunk varsa yerel CPU modelini yükler; Celery genel worker'ına
+görev gönderilmez. pgvector cosine distance küçükten büyüğe sıralanır; sonuçlar
+bir doğruluk garantisi veya ilgililik eşiği değil, en yakın chunk'lardır.
+
+Yanıt alanları yalnızca `source_type=document`, `document_name`, `content`,
+`page_number`, `section_title`, `cosine_distance` değerleridir. İç ID/UUID,
+dosya yolu, yükleyen, hash, embedding vektörü, maliyet/fiyat alanları eklenmez.
+`content` yetkili dokümanın metnidir; metin içindeki hassas bilgileri otomatik
+sansürleyen bir mekanizma yoktur. Bilinmeyen sayfa/bölüm bilgisi uydurulmaz.
+
+Geçersiz sorgu/limit `invalid_tool_arguments`, yetkisiz erişim `access_denied`,
+model/profil/veritabanı hatası `tool_unavailable` ile boş veri döndürür. Uyumsuz
+profildeki kayıtlar aramaya katılmaz ve hiçbir vektör otomatik değiştirilmez.
+Asistanın function-calling kaydı, yanıt içinde kaynak gösterimi ve ERP/doküman
+kaynaklarının ayrılması Adım 6'da yapılacaktır.

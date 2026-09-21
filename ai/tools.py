@@ -11,8 +11,13 @@ from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 
+from django.core.exceptions import PermissionDenied
+from django.db import DatabaseError
 from django.db.models import Q
 
+from ai.permissions import can_search_documents
+from ai.services.document_search import DEFAULT_SEARCH_LIMIT, search_document_chunks
+from ai.services.local_embeddings import LocalEmbeddingError, LocalEmbeddingInputError
 from distribution.models import SalesOrder
 from inventory.models import Lot, Product, Stock
 from production.models import ProductionOrder
@@ -31,6 +36,7 @@ TOOL_REQUIRED_ROLES = {
     "get_production_orders": {ROLE_FACTORY},
     "get_sales_orders": {ROLE_BUYER, ROLE_FACTORY},
     "get_fire_records": {ROLE_FACTORY},
+    "search_documents": {ROLE_FACTORY},
 }
 
 MAX_LIMIT = 50
@@ -292,6 +298,23 @@ def get_fire_records(user, limit: int = 10) -> dict[str, Any]:
     )
 
 
+def search_documents(user, query: str, limit: int = DEFAULT_SEARCH_LIMIT) -> dict[str, Any]:
+    """Search private documents with a separate, stricter document access guard."""
+    tool_name = "search_documents"
+    if not _authorized(user, tool_name) or not can_search_documents(user):
+        return _blocked(tool_name)
+    try:
+        return _success(tool_name, search_document_chunks(user, query, limit))
+    except PermissionDenied:
+        return _blocked(tool_name)
+    except LocalEmbeddingInputError:
+        return {"ok": False, "error": "invalid_tool_arguments", "tool": tool_name, "data": []}
+    except (LocalEmbeddingError, DatabaseError, OSError):
+        return {"ok": False, "error": "tool_unavailable", "tool": tool_name, "data": []}
+
+
+# search_documents is callable directly in Step 5. Assistant registration and
+# its function-calling schema are deliberately completed together in Step 6.
 TOOL_FUNCTIONS = {
     "search_products": search_products,
     "get_stock_by_product": get_stock_by_product,
