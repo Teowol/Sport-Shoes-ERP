@@ -8,6 +8,7 @@ from django.db import models
 from django.db.models.signals import post_delete
 from django.dispatch import receiver
 from django.utils import timezone
+from pgvector.django import VectorField
 
 from .document_validation import validate_document_upload
 
@@ -110,6 +111,39 @@ class DocumentChunk(models.Model):
         verbose_name="Bölüm Başlığı",
     )
     content_hash = models.CharField(max_length=64, verbose_name="İçerik SHA-256")
+    embedding = VectorField(
+        dimensions=384,
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name="Embedding",
+    )
+    embedding_model = models.CharField(
+        max_length=255,
+        default="",
+        blank=True,
+        editable=False,
+        verbose_name="Embedding Modeli",
+    )
+    embedding_dimensions = models.PositiveSmallIntegerField(
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name="Embedding Boyutu",
+    )
+    embedding_profile_hash = models.CharField(
+        max_length=64,
+        default="",
+        blank=True,
+        editable=False,
+        verbose_name="Embedding Profil SHA-256",
+    )
+    embedded_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        editable=False,
+        verbose_name="Embedding Oluşturulma Tarihi",
+    )
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Oluşturulma Tarihi")
 
     class Meta:
@@ -122,6 +156,31 @@ class DocumentChunk(models.Model):
             models.UniqueConstraint(
                 fields=("document", "content_hash"),
                 name="uniq_ai_document_chunk_content_hash",
+            ),
+            # Pending chunks have no embedding metadata. A completed embedding
+            # and all of its metadata must be written together, including via
+            # bulk operations that bypass model validation.
+            models.CheckConstraint(
+                name="ai_chunk_embedding_complete",
+                condition=(
+                    models.Q(
+                        embedding__isnull=True,
+                        embedding_model="",
+                        embedding_dimensions__isnull=True,
+                        embedding_profile_hash="",
+                        embedded_at__isnull=True,
+                    )
+                    | (
+                        models.Q(
+                            embedding__isnull=False,
+                            embedding_dimensions__isnull=False,
+                            embedding_dimensions=384,
+                            embedding_profile_hash__regex=r"^[0-9a-f]{64}$",
+                            embedded_at__isnull=False,
+                        )
+                        & ~models.Q(embedding_model="")
+                    )
+                ),
             ),
         ]
         verbose_name = "AI Doküman Parçası"
