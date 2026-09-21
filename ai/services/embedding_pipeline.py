@@ -47,18 +47,24 @@ def record_embedding_error(public_id, generation, message):
             )
 
 
-def dispatch_document_embeddings(public_id, generation):
-    """Called after chunk commit. Publication failure leaves resumable chunks."""
+def publish_document_embeddings(public_id, generation, profile):
+    """Publish without inference; let callers decide how to report failures."""
     from ai.tasks import embed_document_chunks
 
+    if embed_document_chunks.app.conf.task_always_eager:
+        raise LocalEmbeddingConfigurationError("Embedding publication requires a separate worker (eager mode is enabled).")
+    return embed_document_chunks.apply_async(
+        args=[str(public_id), generation, profile.profile_hash],
+        queue=EMBEDDINGS_QUEUE,
+        retry=True,
+        retry_policy={"max_retries": 2, "interval_start": 0, "interval_step": 0.2, "interval_max": 0.5},
+    )
+
+
+def dispatch_document_embeddings(public_id, generation):
+    """Called after chunk commit. Publication failure leaves resumable chunks."""
     try:
-        profile = get_embedding_profile()
-        embed_document_chunks.apply_async(
-            args=[str(public_id), generation, profile.profile_hash],
-            queue=EMBEDDINGS_QUEUE,
-            retry=True,
-            retry_policy={"max_retries": 2, "interval_start": 0, "interval_step": 0.2, "interval_max": 0.5},
-        )
+        publish_document_embeddings(public_id, generation, get_embedding_profile())
     except Exception:
         logger.exception("Embedding task publication failed for %s", public_id)
         # A failing callback must not incorrectly report committed chunking as

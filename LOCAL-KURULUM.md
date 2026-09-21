@@ -112,4 +112,39 @@ en fazla iki kez yeniden denenir; profil/model/içerik doğrulama hataları dene
 Embedding'in tamamlanması ayrıca chunk'ların vektör ve metadata alanlarından
 kontrol edilir. Kuyruk veya embedding hataları yönetim panelindeki işleme hatasına
 `Embedding:` önekiyle yazılır. Broker'a gönderim başarısızsa chunk'lar korunur;
-yönetim panelinden yeniden işleme başlatılabilir. Backfill komutu ayrı Adım 4'tür.
+yönetim panelinden yeniden işleme başlatılabilir veya aşağıdaki backfill komutu kullanılabilir.
+
+## Mevcut chunk'lar için embedding backfill
+
+Yerel servisler ve ayrı `embeddings` worker çalışırken:
+
+```powershell
+$env:DJANGO_SETTINGS_MODULE = 'config.settings_local'
+.\.venv\Scripts\python.exe manage.py embed_pending_chunks --dry-run
+.\.venv\Scripts\python.exe manage.py embed_pending_chunks --batch-size 100 --limit 500
+```
+
+- `--batch-size`: bir taramada okunacak doküman sayısı; varsayılan 100.
+- `--limit`: bu çalıştırmada kuyruğa gönderilecek en fazla doküman sayısı;
+  verilmezse başlangıçtaki en yüksek doküman kimliğine kadar taranır.
+- `--dry-run`: aynı seçim ve profil kontrollerini yapar; veri değiştirmez,
+  görev göndermez veya model yüklemez. `--limit` önizlemeye de uygulanır.
+
+Yalnızca `ready` durumunda, `embedding IS NULL` chunk içeren dokümanlar seçilir.
+Her doküman için mevcut embedding görevi `embeddings` kuyruğuna gönderilir.
+Komutun başarılı bitmesi gönderimin tamamlandığını gösterir; vektörleri ayrı worker
+üretir. Modelin chunk batch boyutu mevcut `AI_EMBEDDING_BATCH_SIZE` ayarıdır.
+Worker ilerlemesi/hataları `.local/embeddings.err.log` ve dokümanın chunk
+metadata'sından izlenebilir.
+
+`Ctrl+C` yeni gönderimleri durdurur ve çıkış kodu 130 döner; önceden kuyruğa
+gönderilmiş görevler çalışmaya devam eder. Aynı komutu tekrar çalıştırarak devam
+edin. Kaydedilmiş vektörler ve zaman damgaları korunur; yarım kalan dokümanın
+yalnızca boş chunk'ları hesaplanır. Worker bitmeden komutu yeniden çalıştırmak
+aynı görevi tekrar kuyruğa koyabilir; worker'ın satır kilidi ve boş vektör kontrolü
+aynı chunk'ın tekrar hesaplanmasını önler. Ayrı bir ilerleme dosyası gerekmez.
+
+Broker/veritabanı hatası veya mevcut vektörlerde profil uyuşmazlığı komutu hatayla
+durdurur; önceki gönderimler geri alınmaz. Uyuşmayan vektörler otomatik silinmez
+veya dönüştürülmez. Yeni yüklenen dokümanlar normal pipeline ile işlenir;
+tarama sırasında yeniden işlenen kayıtlar gerekirse sonraki komutla tekrar taranır.
