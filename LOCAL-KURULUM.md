@@ -179,5 +179,52 @@ sansürleyen bir mekanizma yoktur. Bilinmeyen sayfa/bölüm bilgisi uydurulmaz.
 Geçersiz sorgu/limit `invalid_tool_arguments`, yetkisiz erişim `access_denied`,
 model/profil/veritabanı hatası `tool_unavailable` ile boş veri döndürür. Uyumsuz
 profildeki kayıtlar aramaya katılmaz ve hiçbir vektör otomatik değiştirilmez.
-Asistanın function-calling kaydı, yanıt içinde kaynak gösterimi ve ERP/doküman
-kaynaklarının ayrılması Adım 6'da yapılacaktır.
+
+## Asistanda doküman RAG akışı (Adım 6)
+
+`search_documents` yedinci function-calling aracıdır. Şema yalnızca doküman
+arama yetkisi olan kullanıcılara sunulur; çağrı yürütülürken de yetki kontrol
+edilir. Mevcut altı ERP aracının veri sözleşmeleri ve rol kuralları korunur.
+Doküman araması da mevcut üç tur sınırına ve tekrar çağrı engeline tabidir;
+baştaki/sondaki boşluklar ve varsayılan `limit=5` tekrar kontrolünden önce
+normalleştirilir. Model veya API değiştirilmemiştir. Araç sonuçları mevcut
+[OpenAI function-calling akışı](https://developers.openai.com/api/docs/guides/function-calling)
+ile ilgili `tool_call_id` üzerinden modele geri verilir.
+
+Her istek içinde dönen chunk'lara `[D1]`, `[D2]` gibi geçici kaynak etiketleri
+atanır; bunlar veritabanı ID'leri değildir. Model, kullandığı doküman bilgisini
+bu etiketle işaretler. Uygulama yalnızca atıf yapılan sonuçların gerçek doküman
+adı ve varsa sayfa/bölüm bilgisini yanıtın sonuna ekler. Eksik konum bilgisi
+uydurulmaz. Aynı chunk farklı aramalarda tekrar gelirse etiketi korunur.
+Etiketler ve kaynak eşlemesi yalnızca o isteğin belleğinde tutulur; sohbet
+geçmişi veya kalıcı hafıza oluşturulmaz.
+
+Araç sonuçları tamamlandıktan sonra modele kullanılabilir doküman ve ERP
+etiketleri sistem mesajıyla hatırlatılır. Bu mesaj yalnızca uygulamanın ürettiği
+etiketleri içerir; doküman metni, başlığı veya bölüm bilgisi sistem talimatına
+dönüştürülmez. Hatırlatma ek model turu açmaz ve kaynak doğrulamasını gevşetmez.
+
+Örnek yanıt biçimi:
+
+```text
+Doküman bilgisi: Uygunsuz ürün karantinaya alınır. [D1]
+ERP canlı verisi: Depoda 12 adet bulunmaktadır. [ERP:get_stock_by_product]
+
+Doküman kaynakları:
+- [D1] Kalite talimatı — sayfa 4 — bölüm: Taban kontrolü
+ERP canlı veri kaynakları:
+- [ERP:get_stock_by_product] get_stock_by_product
+```
+
+Doküman sonuçları geldiği halde atıf yoksa, kaynak etiketi uydurulmuşsa veya
+birlikte kullanılan ERP sonucuna atıf yapılmamışsa doğrulanamayan yanıt yerine
+kısa hata mesajı gösterilir. Ek model çağrısıyla üç tur sınırı aşılmaz. Boş ya da
+başarısız aramadan kaynak listesi üretilmez. Doküman metni ve metadata'sındaki
+talimatlar sistem yetkisi taşımaz; modele bunların yalnızca kanıt olarak
+kullanılacağı belirtilir. Etiket doğrulaması, her cümlenin kaynak metinden
+mantıksal olarak çıktığını otomatik ispatlayan bir denetim değildir.
+
+Embedding üretimi ve vektör araması yerel kalır. Yanıt üretmek için seçilen
+doküman parçaları, mevcut ERP araç çıktıları gibi yapılandırılmış OpenAI
+modeline gönderilir. Sohbet ekranı kaynakları mevcut düz metin gösterimiyle
+sunar; HTML çalıştırılmaz.

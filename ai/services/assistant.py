@@ -9,6 +9,9 @@ from typing import Any
 import openai
 from django.conf import settings
 
+from ai.permissions import can_search_documents
+from ai.services.document_search import DEFAULT_SEARCH_LIMIT, MAX_QUERY_CHARACTERS, MAX_SEARCH_LIMIT
+from ai.services.rag_sources import RAG_SYSTEM_INSTRUCTIONS, RAGSources
 from ai.tools import TOOL_FUNCTIONS, TOOL_REQUIRED_ROLES, get_user_role
 
 
@@ -98,6 +101,22 @@ _TOOL_DEFINITION_BY_NAME = {
             },
         },
     },
+    "search_documents": {
+        "type": "function",
+        "function": {
+            "name": "search_documents",
+            "description": "Yüklenen dokümanlarda prosedür, talimat ve açıklama arar. Canlı ERP verisi değildir. Dönen citation etiketlerini yanıtta kullan.",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "minLength": 1, "maxLength": MAX_QUERY_CHARACTERS},
+                    "limit": {"type": "integer", "minimum": 1, "maximum": MAX_SEARCH_LIMIT, "default": DEFAULT_SEARCH_LIMIT},
+                },
+                "required": ["query"],
+                "additionalProperties": False,
+            },
+        },
+    },
 }
 
 
@@ -118,6 +137,7 @@ class LLMService:
             definition
             for name, definition in _TOOL_DEFINITION_BY_NAME.items()
             if role in TOOL_REQUIRED_ROLES[name]
+            and (name != "search_documents" or can_search_documents(user))
         ]
 
     def ask(self, prompt, system_prompt, user, temperature=0.2):
@@ -125,11 +145,12 @@ class LLMService:
             raise RuntimeError("LLM service is unavailable")
 
         messages: list[dict[str, Any]] = [
-            {"role": "system", "content": system_prompt},
+            {"role": "system", "content": system_prompt + "\n\n" + RAG_SYSTEM_INSTRUCTIONS},
             {"role": "user", "content": prompt},
         ]
         seen_calls: set[str] = set()
         tools = self.tool_definitions_for(user)
+        sources = RAGSources()
 
         for round_number in range(MAX_TOOL_ROUNDS):
             response = self.client.chat.completions.create(
@@ -142,7 +163,9 @@ class LLMService:
             message = response.choices[0].message
             tool_calls = message.tool_calls or []
             if not tool_calls:
-                return (message.content or "").strip()
+                if sources.documents and not can_search_documents(user):
+                    return sources.failure()
+                return sources.finalize((message.content or "").strip())
 
             messages.append(
                 {
@@ -164,6 +187,7 @@ class LLMService:
 
             for call in tool_calls:
                 result = self._execute_tool_call(user, call, seen_calls)
+                result = sources.record(call.function.name, result)
                 messages.append(
                     {
                         "role": "tool",
@@ -171,6 +195,13 @@ class LLMService:
                         "content": json.dumps(result, ensure_ascii=False),
                     }
                 )
+
+            citation_instructions = sources.response_instructions()
+            if citation_instructions:
+                # All tool calls have matching results before this reminder.
+                # Only server-assigned labels enter the system message; never
+                # promote retrieved document content/metadata into instructions.
+                messages.append({"role": "system", "content": citation_instructions})
 
             logger.info("AI completed tool round %s", round_number + 1)
 
@@ -192,6 +223,24 @@ class LLMService:
         if not isinstance(arguments, dict):
             logger.warning("AI supplied non-object arguments for tool %s", tool_name)
             return {"ok": False, "error": "invalid_tool_arguments", "data": []}
+
+        if tool_name == "search_documents":
+            if not can_search_documents(user):
+                return {"ok": False, "error": "access_denied", "data": []}
+            query = arguments.get("query")
+            limit = arguments.get("limit", DEFAULT_SEARCH_LIMIT)
+            if (
+                set(arguments) - {"query", "limit"}
+                or not isinstance(query, str)
+                or not query.strip()
+                or len(query) > MAX_QUERY_CHARACTERS
+                or isinstance(limit, bool)
+                or not isinstance(limit, int)
+                or not 1 <= limit <= MAX_SEARCH_LIMIT
+            ):
+                return {"ok": False, "error": "invalid_tool_arguments", "data": []}
+            # Equivalent whitespace/default-limit variants are the same call.
+            arguments = {"query": query.strip(), "limit": limit}
 
         call_key = f"{tool_name}:{json.dumps(arguments, ensure_ascii=False, sort_keys=True)}"
         if call_key in seen_calls:

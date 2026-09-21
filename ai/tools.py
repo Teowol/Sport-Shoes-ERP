@@ -313,8 +313,6 @@ def search_documents(user, query: str, limit: int = DEFAULT_SEARCH_LIMIT) -> dic
         return {"ok": False, "error": "tool_unavailable", "tool": tool_name, "data": []}
 
 
-# search_documents is callable directly in Step 5. Assistant registration and
-# its function-calling schema are deliberately completed together in Step 6.
 TOOL_FUNCTIONS = {
     "search_products": search_products,
     "get_stock_by_product": get_stock_by_product,
@@ -322,4 +320,5 @@ TOOL_FUNCTIONS = {
     "get_production_orders": get_production_orders,
     "get_sales_orders": get_sales_orders,
     "get_fire_records": get_fire_records,
+    "search_documents": search_documents,
 }

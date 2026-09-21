@@ -208,8 +208,8 @@ class DocumentSearchTests(TestCase):
         with patch("ai.tools.search_document_chunks", side_effect=OperationalError("private database")):
             self.assertEqual(search_documents(self.staff, "kalite")["error"], "tool_unavailable")
 
-    def test_assistant_registration_remains_at_step_six(self):
+    def test_assistant_registration_includes_document_search(self):
         from ai.services.assistant import LLMService
-        self.assertEqual(len(TOOL_FUNCTIONS), 6)
-        self.assertNotIn("search_documents", TOOL_FUNCTIONS)
-        self.assertNotIn("search_documents", [d["function"]["name"] for d in LLMService().tool_definitions_for(self.staff)])
+        self.assertEqual(len(TOOL_FUNCTIONS), 7)
+        self.assertIs(TOOL_FUNCTIONS["search_documents"], search_documents)
+        self.assertIn("search_documents", [d["function"]["name"] for d in LLMService().tool_definitions_for(self.staff)])

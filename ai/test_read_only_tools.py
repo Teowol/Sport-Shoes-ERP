@@ -82,6 +82,7 @@ class ReadOnlyToolAccessTests(TestCase):
                 "get_production_orders": {},
                 "get_sales_orders": {},
                 "get_fire_records": {},
+                "search_documents": {"query": "missing"},
             }[tool_name]
             result = tool(self.staff_user, **kwargs)
             self.assertTrue(result["ok"], tool_name)
