@@ -1,10 +1,4 @@
 * { box-sizing: border-box; }
-        :root {
-            --login-lightning: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath fill='%23e1e4e8' d='M46 16 25 46h14l-7 25 27-36H44z M126 96l-21 30h14l-7 25 27-36h-15z'/%3E%3C/svg%3E");
-        }
-        html[data-theme="dark"] {
-            --login-lightning: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cpath fill='%23030e1c' d='M46 16 25 46h14l-7 25 27-36H44z M126 96l-21 30h14l-7 25 27-36h-15z'/%3E%3C/svg%3E");
-        }
         body {
             min-height: 100vh;
             margin: 0;
@@ -13,11 +7,6 @@
             padding: 25px;
             color: var(--text-primary);
             font-family: Arial, Helvetica, sans-serif;
-        }
-        body.speeders-app.page-auth {
-            background-color: var(--bg-primary);
-            background-image: var(--login-lightning), var(--bg-gradient);
-            background-repeat: repeat, no-repeat;
         }
         .card {
             width: min(100%, 420px);
