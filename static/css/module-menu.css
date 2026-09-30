@@ -1,0 +1,67 @@
+.module-menu-brand { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.speeders-app .module-menu-toggle,
+.speeders-app .module-drawer-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-shrink: 0;
+    width: auto;
+    min-width: 44px;
+    min-height: 44px;
+    margin: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 9px;
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    font: 600 13px/1.2 Arial, Helvetica, sans-serif;
+    cursor: pointer;
+}
+.speeders-app .module-menu-toggle[hidden] { display: none; }
+.speeders-app .module-menu-toggle:hover,
+.speeders-app .module-drawer-close:hover { background: var(--surface-hover); border-color: var(--accent-border); }
+html.module-menu-open { overflow: hidden; }
+.speeders-app .module-drawer {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: min(360px, calc(100vw - 24px));
+    height: 100%;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 24px;
+    border: 0;
+    border-right: 1px solid var(--border-color);
+    background: var(--surface-primary);
+    color: var(--text-primary);
+    box-shadow: var(--shadow);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    text-align: left;
+}
+.module-drawer[open] { animation: module-drawer-enter .22s ease-out; }
+.module-drawer::backdrop { background: var(--overlay); }
+.module-drawer-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
+.speeders-app .module-drawer-brand { margin: 0 0 6px; color: var(--accent-text); font-size: 11px; font-weight: 700; letter-spacing: 3px; }
+.speeders-app .module-drawer h2 { margin: 0; font-size: 24px; line-height: 1.3; }
+.speeders-app .module-drawer-note { margin: 0 0 16px; color: var(--text-secondary); font-size: 13px; line-height: 1.6; }
+.module-drawer-nav { display: grid; gap: 4px; }
+.module-drawer-group { margin: 14px 0 0; padding-top: 16px; border-top: 1px solid var(--border-color); }
+.speeders-app .module-drawer-group h3 { margin: 0 10px 8px; color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
+.speeders-app .module-drawer-link { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; padding: 11px 10px; border-radius: 8px; color: var(--text-primary); font-size: 14px; line-height: 1.5; text-decoration: none; }
+.module-drawer-link > :last-child { color: var(--accent-text); }
+.speeders-app .module-drawer-link:hover { background: var(--surface-hover); }
+.speeders-app .module-drawer-link[aria-current="page"] { background: var(--surface-selected); font-weight: 700; }
+.module-menu-toggle:focus-visible, .module-drawer :focus-visible { outline: 2px solid var(--accent-border); outline-offset: 2px; }
+@keyframes module-drawer-enter { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@media (max-width: 1100px) { .page-home .module-menu-toggle span { display: none; } }
+@media (max-width: 600px) {
+    .module-menu-brand { gap: 10px; }
+    .module-menu-toggle span { display: none; }
+    .page-home .header-inner { gap: 12px; }
+    .page-home .brand-erp { display: none; }
+    .page-home .menu-toggle { margin-left: auto; }
+}
+@media (prefers-reduced-motion: reduce) { .module-drawer[open] { animation: none; } }

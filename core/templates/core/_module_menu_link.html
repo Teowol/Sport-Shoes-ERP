@@ -1,0 +1,5 @@
+{% load i18n %}
+{% url route as module_url %}
+<a class="module-drawer-link" href="{% if audience == 'guest' and route != 'home' %}{% url 'login' %}?next={{ module_url|urlencode }}{% else %}{{ module_url }}{% endif %}">
+    <span>{% translate label %}</span><span aria-hidden="true">↗</span>
+</a>

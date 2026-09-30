@@ -8,6 +8,14 @@ templates and routes. Longer phrases are replaced before shorter labels.
 import re
 
 EN_TRANSLATIONS = {
+    "Modüller": "Modules",
+    "Modül menüsü": "Module navigation",
+    "Paneli kapat": "Close panel",
+    "Devam etmek için hesabınızla giriş yapın.": "Sign in to your account to continue.",
+    "İşletme Paneli": "Business Dashboard",
+    "Tedarik ve Satın Alma": "Procurement and Purchasing",
+    "Üretim Operasyonları": "Production Operations",
+    "Yönetim Paneli": "Administration",
     "Açık temaya geç": "Switch to light theme",
     "Koyu temaya geç": "Switch to dark theme",
     "Temayı değiştir": "Change theme",

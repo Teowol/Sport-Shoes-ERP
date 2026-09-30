@@ -2,6 +2,7 @@
 {% load static i18n %}
 {% block title %}SPEEDERS ERP | {% translate "Tabandan Satışa." %}{% endblock %}
 {% block page_class %}page-home{% endblock %}
+{% block extra_head %}{% include 'core/_module_menu_assets.html' %}{% endblock %}
 {% block page_styles %}
 <meta name="description" content="{% translate 'Spor ayakkabı üretimini, stok, satış ve müşteri operasyonlarını bir araya getiren modern platform.' %}">
 
@@ -10,15 +11,19 @@
     <script src="{% static 'js/home.js' %}" defer></script>
 {% endblock %}
 {% block content %}
+{% include 'core/_module_menu.html' with audience='guest' %}
 {% url 'portal' as factory_portal_url %}
 {% url 'customer_home' as customer_portal_url %}
 <a class="skip-link" href="#main">{% translate "İçeriğe geç" %}</a>
     <header class="site-header" id="top">
         <div class="container header-inner">
-            <a class="brand" href="{% url 'home' %}" aria-label="SPEEDERS ERP">
-                <span class="brand-mark" aria-hidden="true"><img src="{% static 'branding/SPEEDERSLOGO.png' %}" alt="" width="1254" height="1254"></span>
-                <span>SPEEDERS <span class="brand-erp">ERP</span></span>
-            </a>
+            <div class="module-menu-brand">
+                {% include 'core/_module_menu_button.html' %}
+                <a class="brand" href="{% url 'home' %}" aria-label="SPEEDERS ERP">
+                    <span class="brand-mark" aria-hidden="true"><img src="{% static 'branding/SPEEDERSLOGO.png' %}" alt="" width="1254" height="1254"></span>
+                    <span>SPEEDERS <span class="brand-erp">ERP</span></span>
+                </a>
+            </div>
             <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav" hidden>
                 {% include "core/_home_icon.html" with icon="menu" %}<span>{% translate "Menü" %}</span>
             </button>

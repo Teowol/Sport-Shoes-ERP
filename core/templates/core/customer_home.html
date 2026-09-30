@@ -3,12 +3,17 @@
 
 {% block title %}SPEEDERS | Müşteri Paneli{% endblock %}
 {% block page_class %}page-core-customer-home{% endblock %}
+{% block extra_head %}{% include 'core/_module_menu_assets.html' %}{% endblock %}
 {% block page_styles %}
 <link rel="stylesheet" href="{% static 'css/pages/core-customer_home.css' %}?v=1">
 {% endblock %}
 {% block content %}
+{% include 'core/_module_menu.html' with audience='customer' %}
 <header class="topbar">
-        <a class="brand" href="{% url 'customer_home' %}">SPEEDERS</a>
+        <div class="module-menu-brand">
+            {% include 'core/_module_menu_button.html' %}
+            <a class="brand" href="{% url 'customer_home' %}">SPEEDERS</a>
+        </div>
 
         <div class="top-actions" data-theme-toolbar>
             {% include "core/_language_toggle.html" %}
