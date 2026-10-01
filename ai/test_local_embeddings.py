@@ -77,7 +77,7 @@ EMBEDDING_SETTINGS = {
     "AI_EMBEDDING_PROVIDER": "local_fastembed",
     "AI_EMBEDDING_MODEL_ID": MODEL_ID,
     "AI_EMBEDDING_MODEL_REVISION": MODEL_REVISION,
-    "AI_EMBEDDING_MODEL_PATH": "/tmp/test-local-embedding-model",
+    "AI_EMBEDDING_MODEL_PATH": "/tmp/test-local-embedding-model",  # nosec B108
     "AI_EMBEDDING_DIMENSION": 384,
     "AI_EMBEDDING_BATCH_SIZE": 4,
     "AI_EMBEDDING_THREADS": 1,
@@ -94,7 +94,7 @@ class LocalEmbeddingServiceTests(SimpleTestCase):
             mock.patch.object(
                 LocalEmbeddingService,
                 "_validate_model_path",
-                return_value=Path("/tmp/test-local-embedding-model"),
+                return_value=Path("/tmp/test-local-embedding-model"),  # nosec B108
             ),
             mock.patch.object(
                 LocalEmbeddingService,
@@ -178,7 +178,7 @@ class LocalEmbeddingServiceTests(SimpleTestCase):
 
     def test_missing_model_path_fails_closed(self):
         with override_settings(
-            AI_EMBEDDING_MODEL_PATH="/tmp/model-path-that-does-not-exist"
+            AI_EMBEDDING_MODEL_PATH="/tmp/model-path-that-does-not-exist"  # nosec B108
         ):
             with self.assertRaises(LocalEmbeddingConfigurationError):
                 LocalEmbeddingService()
@@ -252,7 +252,7 @@ class LocalEmbeddingServiceTests(SimpleTestCase):
             mock.patch.object(
                 LocalEmbeddingService,
                 "_validate_model_path",
-                return_value=Path("/tmp/test-local-embedding-model"),
+                return_value=Path("/tmp/test-local-embedding-model"),  # nosec B108
             ),
             mock.patch.object(
                 LocalEmbeddingService,
@@ -267,7 +267,7 @@ class LocalEmbeddingServiceTests(SimpleTestCase):
         self.assertEqual(captured["load"]["providers"], ["CPUExecutionProvider"])
         self.assertEqual(
             captured["load"]["specific_model_path"],
-            str(Path("/tmp/test-local-embedding-model")),
+            str(Path("/tmp/test-local-embedding-model")),  # nosec B108
         )
         self.assertEqual(captured["load"]["threads"], 1)
         self.assertEqual(captured["registration"]["dim"], 384)

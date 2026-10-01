@@ -26,15 +26,15 @@ class ReadOnlyToolAccessTests(TestCase):
         user_model = get_user_model()
         buyer_group = Group.objects.create(name="Buyer")
 
-        self.buyer = user_model.objects.create(username="buyer", password="safe-password")
+        self.buyer = user_model.objects.create(username="buyer", password="safe-password")  # nosec B106
         self.buyer.groups.add(buyer_group)
-        self.other_buyer = user_model.objects.create(username="other-buyer", password="safe-password")
+        self.other_buyer = user_model.objects.create(username="other-buyer", password="safe-password")  # nosec B106
         self.other_buyer.groups.add(buyer_group)
         self.staff_user = user_model.objects.create(
-            username="staff", password="safe-password", is_staff=True
+            username="staff", password="safe-password", is_staff=True  # nosec B106
         )
         self.unassigned_user = user_model.objects.create(
-            username="unassigned", password="safe-password"
+            username="unassigned", password="safe-password"  # nosec B106
         )
 
         self.own_customer = Customer.objects.create(
@@ -114,7 +114,7 @@ class AssistantServiceTests(TestCase):
     def setUp(self):
         user_model = get_user_model()
         self.staff_user = user_model.objects.create(
-            username="assistant-staff", password="safe-password", is_staff=True
+            username="assistant-staff", password="safe-password", is_staff=True  # nosec B106
         )
 
     def _tool_call_response(self, name, arguments, call_id="call-1"):
