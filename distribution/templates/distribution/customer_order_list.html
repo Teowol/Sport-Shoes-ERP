@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}Siparişlerim | SPEEDERS{% endblock %}
@@ -7,12 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/pages/distribution-customer_order_list.css' %}?v=1">
 {% endblock %}
 {% block content %}
-<header data-theme-toolbar>
-        <a class="brand" href="{% url 'customer_home' %}">SPEEDERS</a>
-        <a href="{% url 'catalog:product_list' %}">Katalog</a>
-    </header>
-
-    <main class="page">
+<main class="page">
         <h1>Siparişlerim</h1>
 
         {% if orders %}

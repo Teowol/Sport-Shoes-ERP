@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}Lot Takibi{% endblock %}
@@ -10,23 +10,11 @@
     <link rel="stylesheet" href="{% static 'css/pages/inventory-lot_tracking_list.css' %}?v=1">
 {% endblock %}
 {% block content %}
-<header class="header">
-        <h1>SPEEDERS ERP</h1>
-        <nav>
-            <a href="{% url 'portal' %}">Portal</a>
-            <a href="{% url 'inventory:stock_level_list' %}">Stok Seviyeleri</a>
-            <a href="{% url 'inventory:stock_movement_list' %}">Stok Hareketleri</a>
-        </nav>
-    </header>
-
-    <main class="container">
+<main class="container">
         <div class="page-top">
             <div>
                 <h2 class="page-title">Lot Takibi</h2>
                 <div class="page-tag">Ürün parti bazlı stok ve kullanım takibi</div>
-            </div>
-            <div class="top-actions" data-theme-toolbar>
-                <a class="btn-back" href="{% url 'portal' %}">← Portal</a>
             </div>
         </div>
 

@@ -1,0 +1,9 @@
+{% load i18n %}
+{% include "core/_module_menu.html" %}
+<header class="module-topbar">
+    <div class="module-menu-brand">
+        {% include "core/_module_menu_button.html" %}
+        <a class="module-brand" href="{% url portal_route %}">SPEEDERS</a>
+    </div>
+    <div class="module-topbar-actions" data-theme-toolbar></div>
+</header>

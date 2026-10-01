@@ -13,10 +13,11 @@
     <link rel="stylesheet" href="{% static 'css/theme.css' %}?v=2">
     {% block extra_head %}{% endblock %}
 </head>
-<body class="speeders-app {% block page_class %}{% endblock %}">
+<body class="speeders-app {% block layout_class %}{% endblock %} {% block page_class %}{% endblock %}">
     <div class="theme-control" data-theme-control>
         {% include "core/_theme_toggle.html" %}
     </div>
+    {% block navigation %}{% endblock %}
     {% block content %}{% endblock %}
     {% block scripts %}{% endblock %}
 </body>

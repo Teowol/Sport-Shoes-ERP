@@ -7,7 +7,7 @@
 <meta name="description" content="{% translate 'Spor ayakkabı üretimini, stok, satış ve müşteri operasyonlarını bir araya getiren modern platform.' %}">
 
 
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/home.css' %}?v=2">
     <script src="{% static 'js/home.js' %}" defer></script>
 {% endblock %}
 {% block content %}
@@ -92,10 +92,10 @@
         <section class="section container" aria-labelledby="features-title">
             <div class="section-heading"><p class="eyebrow">{% translate "BİRBİRİNE BAĞLI OPERASYONLAR" %}</p><h2 id="features-title">{% translate "Her Adımda SPEEDERS" %}</h2></div>
             <div class="feature-grid">
-                <article class="feature-card">{% include "core/_home_icon.html" with icon="box" %}<h3>{% translate "Ürün Kataloğu" %}</h3><p>{% translate "Mevcut spor ayakkabı modellerini keşfedin." %}</p></article>
-                <article class="feature-card">{% include "core/_home_icon.html" with icon="clipboard" %}<h3>{% translate "Sipariş Yönetimi" %}</h3><p>{% translate "Sipariş verin ve her aşamasını takip edin." %}</p></article>
-                <article class="feature-card">{% include "core/_home_icon.html" with icon="factory" %}<h3>{% translate "Üretim Yönetimi" %}</h3><p>{% translate "Fabrika üretim süreçlerini bir arada yönetin." %}</p></article>
-                <article class="feature-card">{% include "core/_home_icon.html" with icon="layers" %}<h3>{% translate "Stok Takibi" %}</h3><p>{% translate "Ürün ve malzeme stoklarını izleyin." %}</p></article>
+                <article class="feature-card">{% include "core/_home_icon.html" with icon="box" %}<h3>{% translate "Ürün Kataloğu" %}</h3></article>
+                <article class="feature-card">{% include "core/_home_icon.html" with icon="clipboard" %}<h3>{% translate "Sipariş Yönetimi" %}</h3></article>
+                <article class="feature-card">{% include "core/_home_icon.html" with icon="factory" %}<h3>{% translate "Üretim Yönetimi" %}</h3></article>
+                <article class="feature-card">{% include "core/_home_icon.html" with icon="layers" %}<h3>{% translate "Stok Takibi" %}</h3></article>
             </div>
         </section>
         <section class="container why-section" aria-labelledby="why-title">

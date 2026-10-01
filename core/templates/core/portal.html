@@ -5,7 +5,7 @@
 {% block page_class %}page-core-portal{% endblock %}
 {% block extra_head %}{% include 'core/_module_menu_assets.html' %}{% endblock %}
 {% block page_styles %}
-<link rel="stylesheet" href="{% static 'css/pages/core-portal.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'css/pages/core-portal.css' %}?v=2">
 {% endblock %}
 {% block content %}
 {% include 'core/_module_menu.html' with audience='factory' %}
@@ -55,56 +55,48 @@
                 <a class="module-card" href="{% url 'ai:chat_page' %}">
                     <div class="module-icon">✦</div>
                     <h3>Yapay Zekâ Asistanı</h3>
-                    <p>Stok, üretim, kalite ve satış operasyonları hakkında hızlı destek alın.</p>
                     <span class="module-arrow">Asistanı aç →</span>
                 </a>
 
                 <a class="module-card" href="{% url 'inventory:stock_level_list' %}">
                     <div class="module-icon">▣</div>
                     <h3>Stok Yönetimi</h3>
-                    <p>Depolar, stok seviyeleri ve stok hareketleri.</p>
                     <span class="module-arrow">Modülü aç →</span>
                 </a>
 
                 <a class="module-card" href="{% url 'inventory:lot_tracking_list' %}">
                     <div class="module-icon">⎇</div>
                     <h3>Lot Takibi</h3>
-                    <p>Parti bazlı takip, kalan miktar ve durum görünümü.</p>
                     <span class="module-arrow">Modülü aç →</span>
                 </a>
 
                 <a class="module-card" href="{% url 'inventory:fire_tracking_list' %}">
                     <div class="module-icon">✖</div>
                     <h3>Fire Takibi</h3>
-                    <p>Kalite kontrolde oluşan fire ve red miktarlarının görünümü.</p>
                     <span class="module-arrow">Modülü aç →</span>
                 </a>
 
                 <a class="module-card" href="{% url 'production:order_list' %}">
                     <div class="module-icon">⚙</div>
                     <h3>Üretim</h3>
-                    <p>Üretim emirleri, hatlar ve operasyon takibi.</p>
                     <span class="module-arrow">Modülü aç →</span>
                 </a>
 
                 <a class="module-card" href="{% url 'production:cost_list' %}">
                     <div class="module-icon">₺</div>
                     <h3>Maliyet Takibi</h3>
-                    <p>Üretim emri bazlı hammadde, işçilik, fire ve toplam maliyet görünümü.</p>
                     <span class="module-arrow">Modülü aç →</span>
                 </a>
 
                 <a class="module-card" href="{% url 'quality:quality_check_list' %}">
                     <div class="module-icon">✓</div>
                     <h3>Kalite Kontrol</h3>
-                    <p>Kontrol planları ve kalite sonuçları.</p>
                     <span class="module-arrow">Modülü aç →</span>
                 </a>
 
                 <a class="module-card" href="{% url 'distribution:sales_order_list' %}">
                     <div class="module-icon">↗</div>
                     <h3>Dağıtım ve Satış</h3>
-                    <p>Sipariş, fatura, sevkiyat ve müşteri işlemleri.</p>
                     <span class="module-arrow">Modülü aç →</span>
                 </a>
                 

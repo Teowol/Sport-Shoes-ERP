@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}Yeni Satış Siparişi{% endblock %}
@@ -7,18 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
 {% endblock %}
 {% block content %}
-<div class="header" data-theme-toolbar>
-        <h1>Sneaker ERP - Satış</h1>
-        <div>
-            <a href="{% url 'distribution:sales_order_list' %}">Siparişler</a>
-            <a href="{% url 'production:order_list' %}">Üretim</a>
-            <a href="{% url 'inventory:stock_level_list' %}">Stok</a>
-            <a href="{% url 'portal' %}" class="portal-link">← Portal</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <a href="{% url 'distribution:sales_order_list' %}" class="btn-back">← Sipariş Listesine Dön</a>
+<div class="container">
         <h2 class="page-title">Yeni Satış Siparişi</h2>
 
         <form method="post" id="order-form">

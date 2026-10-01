@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}{{ variant.sku }} | SPEEDERS{% endblock %}
@@ -7,12 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/pages/catalog-product_detail.css' %}?v=1">
 {% endblock %}
 {% block content %}
-<header data-theme-toolbar>
-        <a class="brand" href="{% url 'home' %}">SPEEDERS</a>
-        <div style="display: flex; gap: 12px; align-items: center;"><a href="{% url 'catalog:product_list' %}">Katalog</a><a href="{% url 'portal' %}" style="padding: 8px 12px; border: 1px solid var(--accent-border); border-radius: 8px;">← Portal</a></div>
-    </header>
-
-    <main class="page">
+<main class="page">
         <div class="card">
             <h1>{{ variant.shoe_model.name }}</h1>
             <div class="sku">SKU: {{ variant.sku }}</div>
@@ -77,8 +72,6 @@
             {% else %}
                 <p class="empty">Bu ürün için henüz depo stok kaydı bulunmuyor.</p>
             {% endif %}
-
-            <a class="back" href="{% url 'catalog:product_list' %}">← Kataloğa Dön</a>
         </div>
     </main>
 {% endblock %}

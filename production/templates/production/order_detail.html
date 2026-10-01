@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}{{ order.order_number }} - Üretim Emri Detayı{% endblock %}
@@ -7,18 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
 {% endblock %}
 {% block content %}
-<div class="header" data-theme-toolbar>
-        <h1>Sneaker ERP - Üretim Yönetimi</h1>
-        <div>
-            <a href="{% url 'production:order_list' %}">Emir Listesi</a>
-            <a href="{% url 'production:operation_list' %}">Operasyonlar</a>
-            <a href="{% url 'quality:quality_check_list' %}">Kalite Kontrol</a>
-            <a href="{% url 'inventory:stock_level_list' %}">Stok</a>
-            <a href="{% url 'portal' %}" class="portal-link">← Portal</a>
-        </div>
-    </div>
-
-    <div class="container">
+<div class="container">
         {% if messages %}
         <div class="messages">
             {% for message in messages %}
@@ -30,7 +19,6 @@
         <div class="top-bar">
             <h2>Üretim Emri: {{ order.order_number }}</h2>
             <div class="action-bar">
-                <a href="{% url 'production:order_list' %}" class="btn btn-secondary">← Listeye Dön</a>
                 {% if "release" in available_actions %}
                 <form method="post" action="{% url 'production:order_action' order.pk 'release' %}" style="display: inline;">
                     {% csrf_token %}

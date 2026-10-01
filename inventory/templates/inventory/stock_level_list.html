@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}Stok Seviyeleri{% endblock %}
@@ -7,17 +7,8 @@
 <link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
 {% endblock %}
 {% block content %}
-<div class="header" data-theme-toolbar>
-        <h1>Sneaker ERP - Stok Seviyeleri</h1>
-        <div>
-            <a href="{% url 'production:order_list' %}">Üretim</a>
-            <a href="{% url 'quality:quality_check_list' %}">Kalite</a>
-            <a href="{% url 'inventory:stock_movement_list' %}">Hareketler</a>
-            <a href="{% url 'portal' %}" class="portal-link">← Portal</a>
-        </div>
-    </div>
-
-    <div class="container">
+<div class="container">
+        <h1 class="page-title">{% translate "Stok Seviyeleri" %}</h1>
         <form method="get" class="filters">
             <input type="text" name="product" placeholder="Ürün kodu / adı" value="{{ current_product }}">
             <select name="warehouse">

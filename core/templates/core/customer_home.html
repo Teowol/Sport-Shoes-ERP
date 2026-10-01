@@ -5,7 +5,7 @@
 {% block page_class %}page-core-customer-home{% endblock %}
 {% block extra_head %}{% include 'core/_module_menu_assets.html' %}{% endblock %}
 {% block page_styles %}
-<link rel="stylesheet" href="{% static 'css/pages/core-customer_home.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'css/pages/core-customer_home.css' %}?v=2">
 {% endblock %}
 {% block content %}
 {% include 'core/_module_menu.html' with audience='customer' %}
@@ -75,28 +75,24 @@
                 <a class="card" href="{% url 'ai:chat_page' %}">
                     <div class="icon">✦</div>
                     <h2>AI Alışveriş Asistanı</h2>
-                    <p>Ürünler, stoklar ve satın alma süreçleriniz hakkında yapay zekadan yardım alın.</p>
                     <span class="card-arrow">Asistanı Aç →</span>
                 </a>
 
                 <a class="card" href="{% url 'catalog:product_list' %}">
                     <div class="icon">◈</div>
                     <h2>Ürün Kataloğu</h2>
-                    <p>SPEEDERS koleksiyonundaki tüm model ve varyantları inceleyin.</p>
                     <span class="card-arrow">Kataloğu İncele →</span>
                 </a>
 
                 <a class="card" href="{% url 'distribution:customer_purchase' %}">
                     <div class="icon">🛍️</div>
                     <h2>Satın Alma</h2>
-                    <p>Ürün seçerek yeni bir toptan/perakende sipariş oluşturun.</p>
                     <span class="card-arrow">Sipariş Başlat →</span>
                 </a>
 
                 <a class="card" href="{% url 'distribution:customer_order_list' %}">
                     <div class="icon">📦</div>
                     <h2>Siparişlerim</h2>
-                    <p>Verdiğiniz siparişlerin durumunu, üretim aşamalarını ve detaylarını takip edin.</p>
                     <span class="card-arrow">Siparişleri Görüntüle →</span>
                 </a>
             </div>

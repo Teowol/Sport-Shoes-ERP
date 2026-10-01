@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}{{ variant.sku }} Satın Al | SPEEDERS{% endblock %}
@@ -7,12 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/pages/distribution-customer_purchase_detail.css' %}?v=1">
 {% endblock %}
 {% block content %}
-<header data-theme-toolbar>
-        <a class="brand" href="{% url 'customer_home' %}">SPEEDERS</a>
-        <a href="{% url 'distribution:customer_purchase' %}">Satın Alma</a>
-    </header>
-
-    <main class="page">
+<main class="page">
         <div class="card">
             <h1>{{ variant.shoe_model.name }}</h1>
             <div class="sku">SKU: {{ variant.sku }}</div>
@@ -32,8 +27,6 @@
                 <input type="number" name="quantity" min="1" step="1" required>
                 <button type="submit">Siparişi Oluştur</button>
             </form>
-
-            <a class="back" href="{% url 'distribution:customer_purchase' %}">← Satın Almaya Dön</a>
         </div>
     </main>
 {% endblock %}

@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}Maliyet Takibi{% endblock %}
@@ -10,26 +10,7 @@
     <link rel="stylesheet" href="{% static 'css/pages/production-cost_list.css' %}?v=1">
 {% endblock %}
 {% block content %}
-<header class="header erp-navbar">
-        <div class="erp-navbar__content">
-            <a class="erp-navbar__brand" href="{% url "home" %}">SPEEDERS</a>
-            <nav class="erp-navbar__links" aria-label="Ana menü" data-theme-toolbar>
-                <a href="{% url "portal" %}" class="portal-link">← Portal</a>
-                <a href="{% url "ai:chat_page" %}">Asistan</a>
-                <a href="{% url "inventory:stock_level_list" %}">Stok</a>
-                <a href="{% url "inventory:lot_tracking_list" %}">Lot</a>
-                <a href="{% url "inventory:fire_tracking_list" %}">Fire</a>
-                <a href="{% url "production:order_list" %}">Üretim</a>
-                <a href="{% url "production:cost_list" %}">Maliyet</a>
-                <a href="{% url "quality:quality_check_list" %}">Kalite</a>
-                <a href="{% url "distribution:sales_order_list" %}">Satış</a>
-                <a href="{% url "procurement:purchase_request_list" %}">Satın Alma</a>
-                <a href="{% url "catalog:product_list" %}">Katalog</a>
-            </nav>
-        </div>
-    </header>
-
-    <div class="container">
+<div class="container">
         <div class="top-bar">
             <h2>Maliyet Raporu</h2>
         </div>

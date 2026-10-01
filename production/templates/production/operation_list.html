@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}Operasyon Takip Ekranı{% endblock %}
@@ -7,17 +7,8 @@
 <link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
 {% endblock %}
 {% block content %}
-<div class="header" data-theme-toolbar>
-        <h1>Sneaker ERP - Operasyon Takip Ekranı</h1>
-        <div>
-            <a href="{% url 'production:order_list' %}">Emir Listesi</a>
-            <a href="{% url 'quality:quality_check_list' %}">Kalite</a>
-            <a href="{% url 'inventory:stock_level_list' %}">Stok</a>
-            <a href="{% url 'portal' %}" class="portal-link">← Portal</a>
-        </div>
-    </div>
-
-    <div class="container">
+<div class="container">
+        <h1 class="page-title">{% translate "Üretim Operasyonları" %}</h1>
         {% if messages %}
         <div class="messages">
             {% for message in messages %}

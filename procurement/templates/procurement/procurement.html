@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}Satın Alma | SPEEDERS{% endblock %}
@@ -7,12 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/pages/procurement-procurement.css' %}?v=1">
 {% endblock %}
 {% block content %}
-<header data-theme-toolbar>
-        <a class="brand" href="{% url 'home' %}">SPEEDERS</a>
-        <a href="{% url 'portal' %}" style="padding: 8px 12px; border: 1px solid var(--accent-border); border-radius: 8px;">← Portal</a>
-    </header>
-
-    <main class="page">
+<main class="page">
         <h1>Satın Alma</h1>
         <p class="subtitle">
             Tedarikçi, satın alma talebi ve sipariş süreçleri

@@ -1,0 +1,69 @@
+.speeders-app.module-page {
+    display: block;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.module-page .module-topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    min-height: 76px;
+    margin: 0;
+    padding: 14px 6%;
+    border: 0;
+    border-bottom: 1px solid var(--border-color);
+    background: var(--header-surface);
+}
+.module-page .module-brand {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--accent-text);
+    font: 700 21px/1.2 Arial, Helvetica, sans-serif;
+    letter-spacing: 5px;
+    text-decoration: none;
+    white-space: nowrap;
+}
+.module-page .module-brand:focus-visible {
+    outline: 2px solid var(--accent-border);
+    outline-offset: 4px;
+}
+.module-topbar-actions { display: flex; align-items: center; gap: 12px; }
+.module-page > .page,
+.module-page > .container {
+    box-sizing: border-box;
+    width: min(1160px, 90%);
+    max-width: none;
+    margin: 0 auto;
+    padding: 32px 0 48px;
+}
+.module-page.page-ai-chat > .page { max-width: 900px; }
+.module-page > .page > h1,
+.module-page > .container > h1,
+.module-page > .container > .page-title,
+.module-page .page-top .page-title,
+.module-page .page-title h1,
+.module-page .top-bar > h2 {
+    margin: 0 0 20px;
+    color: var(--text-primary);
+    font-size: clamp(24px, 3vw, 30px);
+    line-height: 1.25;
+}
+.module-page .card,
+.module-page .filter-card,
+.module-page .table-wrap,
+.module-page .chat-card { border-radius: 12px; }
+.module-page.page-catalog-index > .card { margin: 32px auto; }
+@media (max-width: 600px) {
+    .module-page .module-topbar { padding: 12px 5%; gap: 10px; }
+    .module-page .module-brand { font-size: 17px; letter-spacing: 3px; }
+    .module-page > .page,
+    .module-page > .container { padding-top: 24px; }
+}

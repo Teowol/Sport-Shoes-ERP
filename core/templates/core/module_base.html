@@ -1,0 +1,9 @@
+{% extends "core/base.html" %}
+{% load static module_navigation %}
+
+{% block layout_class %}module-page{% endblock %}
+{% block extra_head %}
+{% include "core/_module_menu_assets.html" %}
+<link rel="stylesheet" href="{% static 'css/module-layout.css' %}?v=1">
+{% endblock %}
+{% block navigation %}{% module_header %}{% endblock %}

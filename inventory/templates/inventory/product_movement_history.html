@@ -1,4 +1,4 @@
-{% extends "core/base.html" %}
+{% extends "core/module_base.html" %}
 {% load static i18n %}
 
 {% block title %}{{ product.name }} - Hareket Geçmişi{% endblock %}
@@ -7,17 +7,7 @@
 <link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
 {% endblock %}
 {% block content %}
-<div class="header" data-theme-toolbar>
-        <h1>Sneaker ERP - Envanter</h1>
-        <div>
-            <a href="{% url 'inventory:stock_level_list' %}">Stok Seviyeleri</a>
-            <a href="{% url 'inventory:stock_movement_list' %}">Hareketler</a>
-            <a href="{% url 'portal' %}" class="portal-link">← Portal</a>
-        </div>
-    </div>
-
-    <div class="container">
-        <a href="{% url 'inventory:stock_level_list' %}" class="btn-back">← Stok Seviyelerine Dön</a>
+<div class="container">
         <h2 class="page-title">{{ product.code }} - {{ product.name }}</h2>
         <p class="subtitle">Ürün hareket geçmişi</p>
 
