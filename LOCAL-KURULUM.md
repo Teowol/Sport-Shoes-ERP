@@ -14,6 +14,24 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\local.ps1 start
 Durdurmak veya durumunu görmek için son parametreyi `stop` veya `status` yapın.
 Kod değişikliklerinden sonra `stop` ve `start` çalıştırın.
 
+## Çalışanlar ve demo verisi
+
+Fabrika portalındaki **Çalışanlar** modülü ad soyad, meslek, departman ve
+aktif/pasif durumunu listeler. Çalışan kayıtları yönetim panelinin **Çalışanlar**
+bölümünden eklenip düzenlenebilir. Müşteri hesapları bu listeye erişemez.
+
+Yerel geliştirme ortamında demo verilerini oluşturmak için:
+
+```powershell
+$env:DJANGO_SETTINGS_MODULE = 'config.settings_local'
+.\.venv\Scripts\python.exe manage.py migrate
+.\.venv\Scripts\python.exe manage.py seed_demo_data
+```
+
+Komut, diğer demo kayıtlarıyla birlikte `DEMO-EMP-001`–`DEMO-EMP-008` kodlu
+sekiz kurgusal çalışan ekler. Tekrar çalıştırıldığında kayıtları çoğaltmaz ve
+mevcut çalışan bilgilerini değiştirmez. Yalnızca `DEBUG=True` ortamında çalışır.
+
 ## Kurulan bileşenler
 
 - Python 3.12 sanal ortamı: `.venv`. Uygulama ve geliştirme bağımlılıkları

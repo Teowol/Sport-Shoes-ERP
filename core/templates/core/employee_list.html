@@ -1,0 +1,58 @@
+{% extends "core/module_base.html" %}
+{% load static i18n %}
+
+{% block title %}SPEEDERS | {% translate "Çalışanlar" %}{% endblock %}
+{% block page_class %}page-core-employees{% endblock %}
+{% block page_styles %}
+<link rel="stylesheet" href="{% static 'css/erp-theme.css' %}?v=5">
+<link rel="stylesheet" href="{% static 'css/pages/core-employees.css' %}?v=1">
+{% endblock %}
+{% block content %}
+<main class="container">
+    <h1 class="page-title">{% translate "Çalışanlar" %}</h1>
+    <p class="subtitle">{% translate "Fabrika ekibi ve meslekleri" %}</p>
+    <form method="get" class="filters" role="search">
+        <label class="employee-search">
+            <span>{% translate "Çalışan ara" %}</span>
+            <input type="search" name="q" value="{{ query }}" placeholder="{% translate 'Ad, çalışan kodu, meslek veya departman' %}">
+        </label>
+        <button type="submit">{% translate "Ara" %}</button>
+    </form>
+    <p class="employee-count">{% translate "Çalışan sayısı" %}: <strong>{{ page_obj.paginator.count }}</strong></p>
+    <section class="card" aria-label="{% translate 'Çalışan listesi' %}">
+        {% if page_obj %}
+        <div class="table-scroll" tabindex="0">
+            <table>
+                <thead><tr>
+                    <th scope="col">{% translate "Çalışan Kodu" %}</th>
+                    <th scope="col">{% translate "Ad Soyad" %}</th>
+                    <th scope="col">{% translate "Meslek" %}</th>
+                    <th scope="col">{% translate "Departman" %}</th>
+                    <th scope="col">{% translate "Durum" %}</th>
+                </tr></thead>
+                <tbody>
+                {% for employee in page_obj %}
+                    <tr>
+                        <td>{{ employee.code }}</td>
+                        <td><strong>{{ employee.full_name }}</strong></td>
+                        <td>{{ employee.profession }}</td>
+                        <td>{{ employee.department|default:"—" }}</td>
+                        <td>{% if employee.is_active %}<span class="badge badge-success">{% translate "Aktif" %}</span>{% else %}<span class="badge badge-warning">{% translate "Pasif" %}</span>{% endif %}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="empty-state">{% if query %}{% translate "Aramanızla eşleşen çalışan bulunamadı." %}{% else %}{% translate "Henüz çalışan kaydı bulunmuyor." %}{% endif %}</p>
+        {% endif %}
+    </section>
+    {% if page_obj.has_other_pages %}
+    <nav class="employee-pagination" aria-label="{% translate 'Sayfalar' %}">
+        {% if page_obj.has_previous %}<a href="?q={{ query|urlencode }}&amp;page={{ page_obj.previous_page_number }}">{% translate "Önceki" %}</a>{% endif %}
+        <span>{{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        {% if page_obj.has_next %}<a href="?q={{ query|urlencode }}&amp;page={{ page_obj.next_page_number }}">{% translate "Sonraki" %}</a>{% endif %}
+    </nav>
+    {% endif %}
+</main>
+{% endblock %}

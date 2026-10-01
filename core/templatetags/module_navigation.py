@@ -1,4 +1,5 @@
 from django import template
+from core.permissions import can_view_employees
 
 register = template.Library()
 
@@ -12,4 +13,7 @@ def module_header(context):
         audience, portal_route = "customer", "customer_home"
     else:
         audience, portal_route = "factory", "portal"
-    return {"audience": audience, "portal_route": portal_route}
+    return {
+        "audience": audience, "portal_route": portal_route,
+        "can_view_employees": audience == "factory" and can_view_employees(user),
+    }

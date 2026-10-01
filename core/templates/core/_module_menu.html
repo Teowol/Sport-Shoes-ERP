@@ -23,6 +23,9 @@
         <section class="module-drawer-group" aria-labelledby="module-factory-title">
             <h3 id="module-factory-title">{% translate "ERP Modülleri" %}</h3>
             {% include 'core/_module_menu_link.html' with route='portal' label='İşletme Paneli' %}
+            {% if can_view_employees %}
+            {% include 'core/_module_menu_link.html' with route='employee_list' label='Çalışanlar' %}
+            {% endif %}
             {% include 'core/_module_menu_link.html' with route='procurement:purchase_request_list' label='Tedarik ve Satın Alma' %}
             {% include 'core/_module_menu_link.html' with route='inventory:stock_level_list' label='Stok Yönetimi' %}
             {% include 'core/_module_menu_link.html' with route='inventory:stock_movement_list' label='Stok Hareketleri' %}

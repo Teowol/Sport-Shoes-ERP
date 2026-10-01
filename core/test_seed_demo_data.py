@@ -9,6 +9,7 @@ from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
 
 from catalog.models import Color, ProductVariant, ShoeModel, Size
+from core.models import Employee
 from distribution.models import Customer, SalesOrder, SalesOrderLine
 from inventory.models import Lot, Product, Stock, StockMovement, Warehouse
 from production.models import (
@@ -31,7 +32,7 @@ class SeedDemoDataTests(TestCase):
         Warehouse, Lot, Stock, StockMovement, ProductionLine, WorkCenter,
         BillOfMaterial, BOMItem, Routing, RoutingOperation, ProductionOrder,
         ProductionOrderComponent, ProductionOrderOperation,
-        Customer, SalesOrder, SalesOrderLine,
+        Customer, SalesOrder, SalesOrderLine, Employee,
     )
 
     def seed(self):
@@ -52,7 +53,7 @@ class SeedDemoDataTests(TestCase):
         expected_counts = {
             ShoeModel: 2, ProductVariant: 4, Product: 5,
             Stock: 3, Lot: 3, StockMovement: 3,
-            ProductionOrder: 2, Customer: 2, SalesOrder: 2, SalesOrderLine: 4,
+            ProductionOrder: 2, Customer: 2, SalesOrder: 2, SalesOrderLine: 4, Employee: 8,
         }
         for model, count in expected_counts.items():
             with self.subTest(model=model.__name__):
@@ -107,6 +108,10 @@ class SeedDemoDataTests(TestCase):
 
     def test_rerun_does_not_reset_used_demo_data(self):
         self.seed()
+        employee = Employee.objects.get(code="DEMO-EMP-001")
+        employee.profession = "Üretim Müdürü"
+        employee.is_active = False
+        employee.save()
         lot = Lot.objects.get(lot_number="DEMO-LOT-1")
         StockMovement.create_verified_movement(
             product=lot.product, warehouse=Warehouse.objects.get(code="DEMO-WH"),
@@ -125,6 +130,7 @@ class SeedDemoDataTests(TestCase):
         self.assertEqual(before, self.snapshot())
 
     def test_unrelated_existing_records_are_unchanged(self):
+        Employee.objects.create(code="REAL-EMP", full_name="Existing employee", profession="Engineer")
         product = Product.objects.create(code="REAL-PRODUCT", name="Existing product")
         warehouse = Warehouse.objects.create(code="REAL-WH", name="Existing warehouse")
         Stock.objects.create(product=product, warehouse=warehouse, quantity=Decimal("17"))
@@ -140,6 +146,13 @@ class SeedDemoDataTests(TestCase):
         Customer.objects.create(
             code="DEMO-CUST-2", name="Existing customer", email="existing@example.invalid",
         )
+        before = self.snapshot()
+        with self.assertRaisesMessage(CommandError, "çakışıyor"):
+            self.seed()
+        self.assertEqual(before, self.snapshot())
+
+    def test_employee_code_collision_preserves_existing_records(self):
+        Employee.objects.create(code="DEMO-EMP-003", full_name="Existing employee", profession="Engineer")
         before = self.snapshot()
         with self.assertRaisesMessage(CommandError, "çakışıyor"):
             self.seed()

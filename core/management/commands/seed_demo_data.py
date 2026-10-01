@@ -12,6 +12,7 @@ from django.db import IntegrityError, transaction
 from django.utils import timezone
 
 from catalog.models import Color, ProductVariant, ShoeModel, Size
+from core.models import Employee
 from distribution.models import Customer, SalesOrder, SalesOrderLine
 from inventory.models import Lot, Product, StockMovement, Warehouse
 from production.models import (
@@ -60,12 +61,27 @@ class Command(BaseCommand):
             raise CommandError(f"Demo verisi oluşturulamadı; tüm işlem geri alındı: {exc}") from exc
         self.stdout.write(self.style.SUCCESS(
             "Demo verisi hazır: 2 ayakkabı modeli, 4 varyant, 1 hammadde, "
-            "3 lot/stok girişi, 2 üretim emri, 2 müşteri ve 2 satış siparişi. "
+            "3 lot/stok girişi, 2 üretim emri, 2 müşteri, 2 satış siparişi ve 8 çalışan. "
             "Mevcut kayıtlar korunur."
         ))
 
     def seed(self):
         now = timezone.now()
+        for index, (name, profession, department) in enumerate((
+            ("Ayşe Yılmaz", "Üretim Mühendisi", "Üretim"),
+            ("Mehmet Kaya", "Saya Dikim Ustası", "Dikim"),
+            ("Elif Demir", "Ayakkabı Tasarımcısı", "Tasarım"),
+            ("Mustafa Çelik", "Taban Montaj Ustası", "Montaj"),
+            ("Zeynep Arslan", "Kalite Kontrol Teknikeri", "Kalite Kontrol"),
+            ("Emre Aydın", "Depo Sorumlusu", "Depo ve Sevkiyat"),
+            ("Selin Koç", "Satın Alma Uzmanı", "Satın Alma"),
+            ("Burak Şahin", "Bakım Teknisyeni", "Bakım"),
+        ), start=1):
+            demo_record(
+                Employee, {"code": f"DEMO-EMP-{index:03d}"},
+                {"full_name": name, "profession": profession,
+                 "department": department, "notes": MARKER}, identity=("notes",),
+            )
         user, _ = demo_record(
             get_user_model(), {"username": "DEMO-SEED"},
             {"first_name": MARKER, "is_active": False, "password": make_password(None)},

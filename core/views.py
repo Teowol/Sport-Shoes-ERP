@@ -6,10 +6,14 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
+from django.db.models import Q
+from django.core.paginator import Paginator
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
 
 from distribution.models import Customer
+from .models import Employee
+from .permissions import can_view_employees
 
 User = get_user_model()
 
@@ -97,7 +101,24 @@ def portal(request):
     """
     if is_buyer(request.user):
         return redirect("customer_home")
-    return render(request, "core/portal.html")
+    return render(request, "core/portal.html", {
+        "can_view_employees": can_view_employees(request.user),
+    })
+
+
+@login_required
+def employee_list(request):
+    if not can_view_employees(request.user):
+        raise PermissionDenied
+    query = request.GET.get("q", "").strip()
+    employees = Employee.objects.all()
+    if query:
+        employees = employees.filter(
+            Q(code__icontains=query) | Q(full_name__icontains=query)
+            | Q(profession__icontains=query) | Q(department__icontains=query)
+        )
+    page = Paginator(employees, 25).get_page(request.GET.get("page"))
+    return render(request, "core/employee_list.html", {"page_obj": page, "query": query})
 
 
 @login_required

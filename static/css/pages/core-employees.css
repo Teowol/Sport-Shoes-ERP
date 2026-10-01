@@ -1,0 +1,9 @@
+.page-core-employees .filters { align-items: flex-end; padding: 16px; }
+.page-core-employees .employee-search { display: flex; flex: 1; flex-direction: column; align-items: stretch; gap: 8px; min-width: 0; }
+.employee-search input { width: 100%; min-width: 0; box-sizing: border-box; }
+.employee-count { color: var(--text-secondary); font-size: 14px; }
+.employee-pagination { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 24px; }
+.employee-pagination a { display: inline-flex; align-items: center; min-height: 44px; color: var(--accent-text); }
+@media (max-width: 600px) {
+    .page-core-employees .employee-search { flex-basis: 100%; }
+}

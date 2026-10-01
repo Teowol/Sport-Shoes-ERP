@@ -8,6 +8,17 @@ templates and routes. Longer phrases are replaced before shorter labels.
 import re
 
 EN_TRANSLATIONS = {
+    "Çalışanlar": "Employees",
+    "Çalışan Kodu": "Employee Code",
+    "Çalışan listesi": "Employee list",
+    "Çalışan sayısı": "Employee count",
+    "Çalışan ara": "Search employees",
+    "Fabrika ekibi ve meslekleri": "Factory team and professions",
+    "Ad, çalışan kodu, meslek veya departman": "Name, employee code, profession or department",
+    "Meslek": "Profession",
+    "Departman": "Department",
+    "Aramanızla eşleşen çalışan bulunamadı.": "No employees match your search.",
+    "Henüz çalışan kaydı bulunmuyor.": "No employees have been added yet.",
     "Modüller": "Modules",
     "Modül menüsü": "Module navigation",
     "Paneli kapat": "Close panel",
