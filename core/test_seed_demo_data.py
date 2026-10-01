@@ -7,16 +7,23 @@ from django.core.exceptions import ValidationError
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
+from django.db.models import Sum
+from django.urls import reverse
+from django.utils import timezone
 
 from catalog.models import Color, ProductVariant, ShoeModel, Size
 from core.models import Employee
-from distribution.models import Customer, SalesOrder, SalesOrderLine
+from distribution.models import Customer, Invoice, SalesOrder, SalesOrderLine
 from inventory.models import Lot, Product, Stock, StockMovement, Warehouse
+from logistics.models import Shipment
+from procurement.models import Supplier, PurchaseRequest, PurchaseRequestLine, PurchaseOrder, PurchaseOrderLine
+from quality.models import QualityCheck
 from production.models import (
     BOMItem,
     BillOfMaterial,
     ProductionLine,
     ProductionOrder,
+    ProductionCost,
     ProductionOrderComponent,
     ProductionOrderOperation,
     Routing,
@@ -32,7 +39,9 @@ class SeedDemoDataTests(TestCase):
         Warehouse, Lot, Stock, StockMovement, ProductionLine, WorkCenter,
         BillOfMaterial, BOMItem, Routing, RoutingOperation, ProductionOrder,
         ProductionOrderComponent, ProductionOrderOperation,
-        Customer, SalesOrder, SalesOrderLine, Employee,
+        Customer, SalesOrder, SalesOrderLine, Employee, Supplier, PurchaseRequest,
+        PurchaseRequestLine, PurchaseOrder, PurchaseOrderLine, QualityCheck,
+        ProductionCost, Invoice, Shipment,
     )
 
     def seed(self):
@@ -49,11 +58,14 @@ class SeedDemoDataTests(TestCase):
             StockMovement, "create_verified_movement", wraps=original_movement,
         ) as create_movement:
             self.assertIn("Demo verisi hazır", self.seed())
-        self.assertEqual(create_movement.call_count, 3)
+        self.assertEqual(create_movement.call_count, 8)
         expected_counts = {
             ShoeModel: 2, ProductVariant: 4, Product: 5,
-            Stock: 3, Lot: 3, StockMovement: 3,
-            ProductionOrder: 2, Customer: 2, SalesOrder: 2, SalesOrderLine: 4, Employee: 8,
+            Stock: 5, Lot: 5, StockMovement: 9,
+            ProductionOrder: 4, Customer: 2, SalesOrder: 4, SalesOrderLine: 6, Employee: 8,
+            Supplier: 2, PurchaseRequest: 3, PurchaseRequestLine: 3,
+            PurchaseOrder: 2, PurchaseOrderLine: 2, QualityCheck: 2,
+            ProductionCost: 2, Invoice: 2, Shipment: 2,
         }
         for model, count in expected_counts.items():
             with self.subTest(model=model.__name__):
@@ -68,7 +80,7 @@ class SeedDemoDataTests(TestCase):
             self.assertEqual(variant.product.unit, Product.Unit.PAIR)
             self.assertTrue(variant.product.barcode.startswith("PRD-"))
             self.assertEqual(variant.product.qr_code, variant.product.qr_payload)
-        for lot in Lot.objects.all():
+        for lot in Lot.objects.filter(lot_number__in=["DEMO-LOT-RAW", "DEMO-LOT-1", "DEMO-LOT-2"]):
             self.assertTrue(lot.barcode.startswith("LOT-"))
             self.assertEqual(lot.qr_code, lot.qr_payload)
             self.assertEqual(lot.remaining_quantity, lot.initial_quantity)
@@ -76,7 +88,7 @@ class SeedDemoDataTests(TestCase):
             self.assertEqual(stock.quantity, lot.initial_quantity)
             self.assertEqual(stock.available_quantity, stock.quantity)
             self.assertEqual(lot.stock_movements.get().product_id, lot.product_id)
-        for order in ProductionOrder.objects.all():
+        for order in ProductionOrder.objects.filter(order_number__startswith="DEMO-PO-"):
             self.assertEqual(order.status, ProductionOrder.Status.PLANNED)
             self.assertEqual(order.product_id, order.bill_of_material.product_id)
             self.assertEqual(order.product_id, order.routing.product_id)
@@ -90,7 +102,7 @@ class SeedDemoDataTests(TestCase):
                 operation.routing_operation.work_center.production_line_id,
                 order.production_line_id,
             )
-        for order in SalesOrder.objects.all():
+        for order in SalesOrder.objects.filter(order_number__startswith="DEMO-SO-"):
             self.assertEqual(order.status, SalesOrder.Status.DRAFT)
             self.assertEqual(order.total_amount, Decimal("4800"))
             self.assertEqual(order.lines.count(), 2)
@@ -99,6 +111,108 @@ class SeedDemoDataTests(TestCase):
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
         self.assertFalse(user.has_usable_password())
+
+    def test_operational_scenarios_balance_stock_quality_cost_and_invoices(self):
+        self.seed()
+        for stock in Stock.objects.all():
+            incoming = stock.product.stock_movements.filter(
+                warehouse=stock.warehouse, movement_type=StockMovement.MovementType.IN,
+            ).aggregate(total=Sum("quantity"))["total"] or Decimal("0")
+            outgoing = stock.product.stock_movements.filter(
+                warehouse=stock.warehouse, movement_type=StockMovement.MovementType.OUT,
+            ).aggregate(total=Sum("quantity"))["total"] or Decimal("0")
+            self.assertEqual(stock.quantity, incoming - outgoing)
+            self.assertGreaterEqual(stock.available_quantity, 0)
+        self.assertEqual(Lot.objects.get(lot_number="DEMO-OPS-RAW").remaining_quantity, Decimal("90"))
+        self.assertEqual(Lot.objects.get(lot_number="LOT-DEMO-RUN-1").remaining_quantity, Decimal("2"))
+        completed = ProductionOrder.objects.get(order_number="DEMO-RUN-1")
+        partial = ProductionOrder.objects.get(order_number="DEMO-RUN-2")
+        self.assertEqual(completed.status, ProductionOrder.Status.COMPLETED)
+        self.assertEqual(partial.status, ProductionOrder.Status.QUALITY_CHECK)
+        self.assertEqual(partial.scrapped_quantity, partial.quality_checks.get().scrapped_quantity)
+        self.assertEqual(partial.produced_quantity, partial.quality_checks.get().accepted_quantity)
+        for cost in ProductionCost.objects.all():
+            self.assertEqual(cost.produced_quantity, cost.production_order.produced_quantity)
+            self.assertEqual(cost.total_cost, cost.raw_material_cost + cost.labor_cost + cost.machine_cost + cost.overhead_cost + cost.scrap_cost)
+            self.assertEqual(cost.unit_cost * cost.produced_quantity, cost.total_cost)
+        for invoice in Invoice.objects.all():
+            self.assertEqual(invoice.subtotal, invoice.sales_order.total_amount)
+            self.assertEqual(invoice.tax_amount, invoice.subtotal * invoice.tax_rate / 100)
+            self.assertEqual(invoice.total_amount, invoice.subtotal + invoice.tax_amount)
+            self.assertIsNone(invoice.emailed_at)
+        for shipment in Shipment.objects.all():
+            self.assertEqual(shipment.sales_order_line.sales_order_id, shipment.sales_order_id)
+            self.assertEqual(shipment.quantity, shipment.sales_order_line.shipped_quantity)
+            movement = StockMovement.objects.get(reference_type="shipment", reference_id=shipment.pk)
+            self.assertEqual(movement.quantity, shipment.quantity)
+            self.assertEqual(movement.product_id, shipment.sales_order_line.product_id)
+
+    def test_expansion_preserves_existing_v1_demo_data(self):
+        command = "core.management.commands.seed_demo_data.Command"
+        with patch(f"{command}.seed_procurement"), patch(f"{command}.seed_operations"):
+            self.seed()
+        before = self.snapshot()
+        self.seed()
+        after = self.snapshot()
+        for model, rows in before.items():
+            for row in rows:
+                self.assertIn(row, after[model])
+        self.assertEqual(QualityCheck.objects.count(), 2)
+        self.assertEqual(Invoice.objects.count(), 2)
+
+    def test_rerun_preserves_edited_operational_records(self):
+        self.seed()
+        PurchaseRequest.objects.filter(request_number="DEMO-PR-1").update(status=PurchaseRequest.Status.CANCELLED)
+        Invoice.objects.filter(invoice_number="DEMO-INV-1").update(status=Invoice.Status.PAID)
+        QualityCheck.objects.filter(production_order__order_number="DEMO-RUN-2").update(rejection_reason="Updated")
+        before = self.snapshot()
+        self.seed()
+        self.assertEqual(before, self.snapshot())
+
+    def test_supplier_collision_rolls_back_the_whole_seed(self):
+        Supplier.objects.create(code="DEMO-SUP-2", company_name="Existing supplier")
+        before = self.snapshot()
+        with self.assertRaisesMessage(CommandError, "çakışıyor"):
+            self.seed()
+        self.assertEqual(before, self.snapshot())
+
+    def test_seed_does_not_queue_external_tasks(self):
+        with self.captureOnCommitCallbacks(execute=True) as callbacks:
+            self.seed()
+        self.assertEqual(callbacks, [])
+
+    def test_invoice_collision_rolls_back_production_and_stock_effects(self):
+        customer = Customer.objects.create(code="REAL-CUST", name="Existing customer", email="real@example.invalid")
+        order = SalesOrder.objects.create(order_number="REAL-SALE", customer=customer)
+        Invoice.objects.create(
+            invoice_number="DEMO-INV-2", customer=customer, sales_order=order,
+            issue_date=timezone.now().date(),
+        )
+        before = self.snapshot()
+        with self.assertRaisesMessage(CommandError, "çakışıyor"):
+            self.seed()
+        self.assertEqual(before, self.snapshot())
+
+    @override_settings(SECURE_SSL_REDIRECT=False)
+    def test_factory_module_pages_display_demo_rows(self):
+        self.seed()
+        user = get_user_model().objects.create_user(username="demo-viewer", is_staff=True)
+        self.client.force_login(user)
+        for route, marker in (
+            ("catalog:product_list", "DEMO-SHOE-1"),
+            ("inventory:stock_level_list", "DEMO-RAW"),
+            ("inventory:stock_movement_list", "DEMO"),
+            ("inventory:lot_tracking_list", "DEMO-OPS-RAW"),
+            ("inventory:fire_tracking_list", "DEMO-RUN-2"),
+            ("production:order_list", "DEMO-RUN-1"),
+            ("production:operation_list", "DEMO-RUN-2"),
+            ("production:cost_list", "DEMO-RUN-1"),
+            ("quality:quality_check_list", "DEMO-RUN-2"),
+            ("procurement:purchase_request_list", "DEMO-PR-1"),
+            ("distribution:sales_order_list", "DEMO-SHIP-SO-1"),
+        ):
+            with self.subTest(route=route):
+                self.assertContains(self.client.get(reverse(route)), marker)
 
     def test_rerun_preserves_every_field_including_barcodes_and_timestamps(self):
         self.seed()

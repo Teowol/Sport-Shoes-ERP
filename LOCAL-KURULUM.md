@@ -32,6 +32,21 @@ Komut, diğer demo kayıtlarıyla birlikte `DEMO-EMP-001`–`DEMO-EMP-008` kodlu
 sekiz kurgusal çalışan ekler. Tekrar çalıştırıldığında kayıtları çoğaltmaz ve
 mevcut çalışan bilgilerini değiştirmez. Yalnızca `DEBUG=True` ortamında çalışır.
 
+Demo ayrıca aşağıdaki modülleri doldurur:
+
+- Katalog: 2 model ve 4 ürün varyantı.
+- Stok ve lot: 2 demo deposunda hammadde, mamul, üretim tüketimi ve sevkiyat hareketleri.
+- Tedarik: 2 tedarikçi, 3 satın alma talebi ve 2 satın alma siparişi.
+- Üretim ve operasyonlar: 2 planlanan, 1 tamamlanan ve 1 kalite kontrolde olan üretim emri.
+- Kalite ve fire: 1 kabul ve 1 kısmi kabul; fire ve yeniden işlem örneği.
+- Maliyet: Hammadde, işçilik, makine, genel gider ve fire maliyetlerini içeren 2 kayıt.
+- Satış ve sevkiyat: 2 müşteri, 4 satış siparişi, 2 fatura ve 2 sevkiyat.
+
+Yeni operasyon örnekleri `DEMO-RUN-*`, `DEMO-PR-*`, `DEMO-BUY-*` ve
+`DEMO-SHIP-*` kodlarıyla ayrılır. Önceden kullanılan demo kayıtları sıfırlanmaz;
+yeni senaryolar ayrı bir demo deposu kullanır. Demo fatura ve sevkiyat kayıtları
+oluşturulurken e-posta gönderilmez ve arka plan görevleri tetiklenmez.
+
 ## Kurulan bileşenler
 
 - Python 3.12 sanal ortamı: `.venv`. Uygulama ve geliştirme bağımlılıkları

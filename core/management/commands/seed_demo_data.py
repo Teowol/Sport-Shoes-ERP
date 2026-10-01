@@ -13,13 +13,17 @@ from django.utils import timezone
 
 from catalog.models import Color, ProductVariant, ShoeModel, Size
 from core.models import Employee
-from distribution.models import Customer, SalesOrder, SalesOrderLine
+from distribution.models import Customer, Invoice, SalesOrder, SalesOrderLine
 from inventory.models import Lot, Product, StockMovement, Warehouse
+from logistics.models import Shipment
+from procurement.models import Supplier, PurchaseRequest, PurchaseRequestLine, PurchaseOrder, PurchaseOrderLine
+from quality.models import QualityCheck
 from production.models import (
     BOMItem,
     BillOfMaterial,
     ProductionLine,
     ProductionOrder,
+    ProductionCost,
     Routing,
     RoutingOperation,
     WorkCenter,
@@ -61,7 +65,9 @@ class Command(BaseCommand):
             raise CommandError(f"Demo verisi oluşturulamadı; tüm işlem geri alındı: {exc}") from exc
         self.stdout.write(self.style.SUCCESS(
             "Demo verisi hazır: 2 ayakkabı modeli, 4 varyant, 1 hammadde, "
-            "3 lot/stok girişi, 2 üretim emri, 2 müşteri, 2 satış siparişi ve 8 çalışan. "
+            "4 üretim emri, 2 kalite kontrolü, 2 maliyet kaydı, 2 müşteri, "
+            "4 satış siparişi, 2 fatura, 2 sevkiyat, 2 tedarikçi, "
+            "3 satın alma talebi, 2 satın alma siparişi ve 8 çalışan. "
             "Mevcut kayıtlar korunur."
         ))
 
@@ -117,6 +123,8 @@ class Command(BaseCommand):
              "capacity_per_hour": Decimal("10")}, identity=("name",),
         )
 
+        demo_products = []
+        demo_customers = []
         for index, name in enumerate(("Koşu", "Yürüyüş"), start=1):
             shoe, _ = demo_record(
                 ShoeModel, {"code": f"DEMO-SHOE-{index}"},
@@ -138,6 +146,7 @@ class Command(BaseCommand):
                 )
                 variants.append(variant)
             product = variants[0].product
+            demo_products.append(product)
             self.seed_stock(product, warehouse, f"DEMO-LOT-{index}", Decimal("12"))
 
             bom, _ = demo_record(
@@ -180,6 +189,7 @@ class Command(BaseCommand):
                 {"name": f"DEMO Müşteri {index}", "email": f"demo{index}@example.invalid",
                  "address": MARKER}, identity=("address",),
             )
+            demo_customers.append(customer)
             order, created = demo_record(
                 SalesOrder, {"order_number": f"DEMO-SO-{index}"},
                 {"customer": customer, "note": MARKER, "status": SalesOrder.Status.DRAFT,
@@ -193,6 +203,166 @@ class Command(BaseCommand):
                         quantity=Decimal("2"), unit_price=variant.price,
                     )
                     line.full_clean()
+
+        self.seed_procurement(user, demo_products, now)
+        self.seed_operations(user, material, demo_products, demo_customers, now)
+
+    def seed_procurement(self, user, products, now):
+        suppliers = []
+        for index, name in enumerate(("DEMO Ege Ayakkabı", "DEMO Marmara Spor"), start=1):
+            supplier, _ = demo_record(
+                Supplier, {"code": f"DEMO-SUP-{index}"},
+                {"company_name": name, "email": f"supplier{index}@example.invalid",
+                 "city": "İstanbul", "notes": MARKER}, identity=("notes",),
+            )
+            suppliers.append(supplier)
+        for index in range(1, 4):
+            product = products[(index - 1) % len(products)]
+            approved = index > 1
+            request, created = demo_record(
+                PurchaseRequest, {"request_number": f"DEMO-PR-{index}"},
+                {"requested_by": user, "purpose": MARKER,
+                 "required_date": (now + timedelta(days=10)).date(),
+                 "status": PurchaseRequest.Status.APPROVED if approved else PurchaseRequest.Status.PENDING_APPROVAL,
+                 "approved_by": user if approved else None,
+                 "approved_at": now if approved else None}, identity=("purpose",),
+            )
+            if created:
+                line = PurchaseRequestLine.objects.create(
+                    purchase_request=request, product=product,
+                    requested_quantity=Decimal("20"), note=MARKER,
+                )
+                line.full_clean()
+            if approved:
+                order, created = demo_record(
+                    PurchaseOrder, {"order_number": f"DEMO-BUY-{index - 1}"},
+                    {"purchase_request": request, "supplier": suppliers[index - 2],
+                     "order_date": now.date(), "expected_delivery_date": (now + timedelta(days=7)).date(),
+                     "status": PurchaseOrder.Status.SENT if index == 2 else PurchaseOrder.Status.DRAFT,
+                     "created_by": user, "note": MARKER}, identity=("note",),
+                )
+                if created:
+                    line = PurchaseOrderLine.objects.create(
+                        purchase_order=order, product=product,
+                        ordered_quantity=Decimal("20"), unit_price=Decimal("700"), note=MARKER,
+                    )
+                    line.full_clean()
+
+    def seed_operations(self, user, material, products, customers, now):
+        # Separate stock keeps new scenarios independent of previously used demo lots.
+        warehouse, _ = demo_record(
+            Warehouse, {"code": "DEMO-OPS-WH"},
+            {"name": "DEMO Operasyon Deposu", "address": MARKER}, identity=("address",),
+        )
+        self.seed_stock(material, warehouse, "DEMO-OPS-RAW", Decimal("100"))
+        raw_lot = Lot.objects.get(lot_number="DEMO-OPS-RAW")
+        for index, product in enumerate(products, start=1):
+            base = ProductionOrder.objects.get(order_number=f"DEMO-PO-{index}")
+            order, created = demo_record(
+                ProductionOrder, {"order_number": f"DEMO-RUN-{index}"},
+                {"product": product, "bill_of_material": base.bill_of_material,
+                 "routing": base.routing, "production_line": base.production_line,
+                 "created_by": user, "raw_materials_warehouse": warehouse,
+                 "finished_goods_warehouse": warehouse, "planned_quantity": Decimal("10"),
+                 "planned_start_date": now, "planned_end_date": now + timedelta(days=1)},
+            )
+            if not created:
+                continue
+            order.create_components_from_bom()
+            order.create_operations_from_routing()
+            order.release()
+            order.start_production()
+            for component in order.order_components.all():
+                self.seed_outgoing(
+                    product=component.component, warehouse=warehouse, lot=raw_lot,
+                    quantity=component.required_quantity, reference=f"DEMO-CONSUME-{index}-{component.pk}",
+                    reference_type="production_order", reference_id=order.pk,
+                )
+                component.consumed_quantity = component.required_quantity
+                component.is_fully_consumed = True
+                component.save(update_fields=["consumed_quantity", "is_fully_consumed"])
+            for operation in order.order_operations.all():
+                operation.start(user=user)
+                operation.complete(Decimal("10"), user=user)
+            check = QualityCheck.objects.create(
+                production_order=order, checked_by=user, checked_quantity=Decimal("10"),
+                accepted_quantity=Decimal("10") if index == 1 else Decimal("8"),
+                rejected_quantity=Decimal("0") if index == 1 else Decimal("2"),
+                scrapped_quantity=Decimal("0") if index == 1 else Decimal("1"),
+                result=QualityCheck.Result.PASS if index == 1 else QualityCheck.Result.PARTIAL,
+                rejection_reason="" if index == 1 else "DEMO: Taban yapıştırma hatası; 1 çift fire, 1 çift yeniden işlem.",
+                notes=MARKER,
+            )
+            check.full_clean()
+            if index == 1:
+                # No sales reference: completion must not enqueue shipping or email jobs.
+                order.complete_production(user=user)
+                lot = Lot.objects.get(lot_number=f"LOT-{order.order_number}")
+            else:
+                order.produced_quantity = check.accepted_quantity
+                order.scrapped_quantity = check.scrapped_quantity
+                order.save(update_fields=["produced_quantity", "scrapped_quantity"])
+                order.send_to_quality_check()
+                lot = None
+            cost = ProductionCost.calculate_for_order(
+                order, user=user, lot=lot, raw_material_cost_override=Decimal("800"),
+                labor_cost_override=Decimal("400"), machine_cost_override=Decimal("240"),
+                overhead_cost_override=Decimal("160"),
+            )
+            cost.full_clean()
+            order.full_clean()
+
+        finished = ProductionOrder.objects.get(order_number="DEMO-RUN-1")
+        lot = Lot.objects.get(lot_number=f"LOT-{finished.order_number}")
+        self.seed_sales(products[0], warehouse, lot, customers, now)
+
+    def seed_outgoing(self, *, product, warehouse, lot, quantity, reference, reference_type, reference_id):
+        if StockMovement.objects.filter(scan_reference=reference).exists():
+            raise CommandError(f"Demo stok referansı çakışıyor: {reference}")
+        movement = StockMovement.create_verified_movement(
+            product=product, warehouse=warehouse, lot=lot, quantity=quantity.normalize(),
+            movement_type=StockMovement.MovementType.OUT, scan_reference=reference,
+            reference_type=reference_type, reference_id=reference_id, note=MARKER,
+        )
+        movement.full_clean()
+
+    def seed_sales(self, product, warehouse, lot, customers, now):
+        for index, customer in enumerate(customers, start=1):
+            order, created = demo_record(
+                SalesOrder, {"order_number": f"DEMO-SHIP-SO-{index}"},
+                {"customer": customer, "note": MARKER,
+                 "status": SalesOrder.Status.SHIPPED if index == 1 else SalesOrder.Status.COMPLETED,
+                 "requested_delivery_date": (now + timedelta(days=2)).date()}, identity=("note",),
+            )
+            if not created:
+                continue
+            line = SalesOrderLine.objects.create(
+                sales_order=order, product=product, quantity=Decimal("4"),
+                unit_price=Decimal("1200"), produced_quantity=Decimal("4"), shipped_quantity=Decimal("4"),
+            )
+            line.full_clean()
+            shipment, shipment_created = demo_record(
+                Shipment, {"shipment_number": f"DEMO-SHIP-{index}"},
+                {"sales_order": order, "sales_order_line": line, "warehouse": warehouse,
+                 "quantity": line.quantity, "shipped_at": now, "note": MARKER,
+                 "status": Shipment.Status.SHIPPED if index == 1 else Shipment.Status.DELIVERED},
+                identity=("note",),
+            )
+            if shipment_created:
+                self.seed_outgoing(
+                    product=product, warehouse=warehouse, lot=lot, quantity=line.quantity,
+                    reference=f"DEMO-SHIP-OUT-{index}", reference_type="shipment", reference_id=shipment.pk,
+                )
+            subtotal = order.total_amount
+            tax = (subtotal * Decimal("0.20")).quantize(Decimal("0.01"))
+            demo_record(
+                Invoice, {"invoice_number": f"DEMO-INV-{index}"},
+                {"sales_order": order, "customer": customer, "issue_date": now.date(),
+                 "due_date": (now + timedelta(days=30)).date(), "subtotal": subtotal,
+                 "tax_rate": Decimal("20"), "tax_amount": tax, "total_amount": subtotal + tax,
+                 "status": Invoice.Status.ISSUED if index == 1 else Invoice.Status.PAID, "notes": MARKER},
+                identity=("notes",),
+            )
 
     def seed_stock(self, product, warehouse, lot_number, quantity):
         lot, created = demo_record(
