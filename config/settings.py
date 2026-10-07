@@ -44,8 +44,8 @@ sentry_sdk.init(
     environment=env("SENTRY_ENVIRONMENT", default="production"),
     release=SENTRY_RELEASE,
     send_default_pii=False,
-    traces_sample_rate=0.05,          # Performans izleme oranı (düşük kaynak)
-    profiles_sample_rate=0.0,         # Profil örnekleme kapalı
+    traces_sample_rate=0.05,          # Performance tracing rate (low resource usage)
+    profiles_sample_rate=0.0,         # Profiling sampling disabled
     before_send=lambda event, hint: None if env.bool("SENTRY_DISABLED", default=False) else event,
 )
 
@@ -59,7 +59,7 @@ if not SECRET_KEY:
 
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["localhost", "127.0.0.1"])
 
-# NGINX reverse proxy arkasında CSRF ve host doğrulaması
+# CSRF and host validation behind the NGINX reverse proxy
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 CSRF_TRUSTED_ORIGINS = env.list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])
 SECURE_SSL_REDIRECT = env.bool("DJANGO_SECURE_SSL_REDIRECT", default=not DEBUG)
@@ -171,10 +171,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = "tr"
+LANGUAGE_CODE = "en"
 
 LANGUAGES = [
-    ("tr", "Türkçe"),
     ("en", "English"),
 ]
 
@@ -266,7 +265,7 @@ CELERY_TASK_ROUTES = {
     "ai.tasks.embed_document_chunks": {"queue": "embeddings"},
 }
 
-# Şirket / Fatura Bilgileri
+# Company / Invoice Information
 COMPANY_NAME = env("COMPANY_NAME", default="")
 COMPANY_ADDRESS = env("COMPANY_ADDRESS", default="")
 COMPANY_TAX_OFFICE = env("COMPANY_TAX_OFFICE", default="")

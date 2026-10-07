@@ -61,7 +61,7 @@ def notify_sales_order_confirmed(order_pk, language_code="tr"):
             },
         )
 
-        # Başka bir task e-postayı gönderdiyse ikinci kez gönderme.
+        # Do not send again if another task has already sent the email.
         if invoice.emailed_at:
             return (
                 f"Fatura {invoice.invoice_number} daha önce gönderilmiş: "
@@ -112,7 +112,7 @@ def notify_sales_order_confirmed(order_pk, language_code="tr"):
         )
         email.send(fail_silently=False)
 
-        # E-posta transaction içinde işaretleniyor.
+        # The email is marked as sent inside the transaction.
         invoice.emailed_at = timezone.now()
         invoice.save(update_fields=["emailed_at", "updated_at"])
 
@@ -229,7 +229,7 @@ def process_order_fulfillment_task(order_pk, user_id=None, language_code="tr"):
             )
             available = stock.available_quantity
 
-            # Bu kalem için zaten sevkiyat/üretim işlemi yapılmışsa tekrar işlem yapma
+            # Skip if this line already has a shipment or production order
             already_shipped = Shipment.objects.filter(sales_order_line=line).exists()
             already_in_production = ProductionOrder.objects.filter(
                 reference_order_number=order.order_number, product=line.product
@@ -239,9 +239,9 @@ def process_order_fulfillment_task(order_pk, user_id=None, language_code="tr"):
                     all_shipped = False
                 continue
 
-            # 1. Senaryo: Depoda yeterli ürün var -> Doğrudan Kargoya Ver
+            # Scenario 1: Enough stock in the warehouse -> ship directly
             if available >= line.quantity:
-                # Stoktan düşüş ve hareket kaydı
+                # Deduct from stock and record the movement
                 stock.quantity -= line.quantity
                 stock.save(update_fields=["quantity", "updated_at"])
 
@@ -255,7 +255,7 @@ def process_order_fulfillment_task(order_pk, user_id=None, language_code="tr"):
                         note=f"Sipariş {order.order_number} FIFO sevkiyat çıkışı",
                     )
 
-                # Kargo / Sevkiyat kaydı oluştur
+                # Create the shipment record
                 shipment_no = f"SHP-{order.order_number}-{uuid.uuid4().hex[:4].upper()}"
                 Shipment.objects.create(
                     shipment_number=shipment_no,
@@ -272,7 +272,7 @@ def process_order_fulfillment_task(order_pk, user_id=None, language_code="tr"):
                 line.save(update_fields=["shipped_quantity"])
                 continue
 
-            # 2. Senaryo: Stok yetersiz -> Eksik kısım için Üretim Emri
+            # Scenario 2: Insufficient stock -> production order for the shortfall
             all_shipped = False
             shortfall = line.quantity - max(available, Decimal("0"))
 
@@ -294,7 +294,7 @@ def process_order_fulfillment_task(order_pk, user_id=None, language_code="tr"):
             timestamp = timezone.now().strftime("%y%m%d%H%M%S")
             po_number = f"PO-{order.order_number}-{line.pk}-{timestamp[-4:]}"
 
-            # Varsa mevcut üretim emrini tekrar oluşturmayalım
+            # Do not recreate an existing production order if one is already present
             po, po_created = ProductionOrder.objects.get_or_create(
                 reference_order_number=order.order_number,
                 product=line.product,

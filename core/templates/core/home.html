@@ -34,7 +34,6 @@
                 <span class="nav-divider" aria-hidden="true"></span>
                 <a class="nav-link" href="{% url 'login' %}">{% translate "Giriş Yap" %}</a>
                 <a class="button button-primary button-small" href="{% url 'register' %}">{% translate "Kayıt Ol" %}</a>
-                {% include "core/_language_toggle.html" %}
             </nav>
         </div>
     </header>
@@ -125,7 +124,6 @@
             <nav class="footer-links" aria-label="{% translate 'Alt gezinme' %}">
                 <a href="{% url 'home' %}">{% translate "Ana Sayfa" %}</a><a href="#about">{% translate "Hakkımızda" %}</a><a href="#contact">{% translate "İletişim" %}</a><a href="{% url 'login' %}">{% translate "Giriş Yap" %}</a><a href="{% url 'register' %}">{% translate "Kayıt Ol" %}</a>
             </nav>
-            {% include "core/_language_toggle.html" %}
         </div>
         <div class="container footer-bottom"><span>© {% now "Y" %} SPEEDERS ERP</span><span>{% translate "Kurumsal Kaynak Planlama Sistemi" %}</span></div>
     </footer>

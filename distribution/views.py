@@ -73,7 +73,7 @@ def sales_order_detail(request, pk):
         pk=pk,
     )
 
-    # Her kalem için kullanılabilir mamul stoku
+    # Available finished-goods stock per line
     warehouse = Warehouse.objects.filter(code="DEP-MM").first()
     stock_map = {}
     if warehouse:
@@ -214,7 +214,7 @@ def sales_order_confirm(request, pk):
         order.status = SalesOrder.Status.CONFIRMED
         order.save()
 
-        # Sipariş onaylandığında müşteriye fatura mailini gönder
+        # Send the invoice email to the customer once the order is confirmed
         transaction.on_commit(
             lambda language_code=get_language(): notify_sales_order_confirmed.delay(order.pk, language_code)
         )
@@ -324,7 +324,7 @@ def create_production_order_from_line(request, line_pk):
         messages.error(request, "Yalnızca onaylanmış veya üretimdeki siparişler için üretim emri oluşturulabilir.")
         return redirect("distribution:sales_order_detail", pk=order.pk)
 
-    # Ürüne ait aktif BOM ve Routing bulalım
+    # Find the active BOM and Routing for the product
     bom = BillOfMaterial.objects.filter(product=line.product, status=BillOfMaterial.Status.ACTIVE).first()
     if not bom:
         messages.error(request, f"{line.product.name} için aktif bir Reçete (BOM) bulunamadı. Önce BOM tanımlamalısınız.")
@@ -343,7 +343,7 @@ def create_production_order_from_line(request, line_pk):
         messages.error(request, "Hammadde (DEP-HM) veya Mamul (DEP-MM) deposu eksik.")
         return redirect("distribution:sales_order_detail", pk=order.pk)
 
-    # Otomatik benzersiz bir emir numarası üretelim
+    # Generate an automatic unique order number
     timestamp = timezone.now().strftime("%y%m%d%H%M%S")
     po_number = f"PO-{order.order_number}-{line.pk}-{timestamp[-4:]}"
 
@@ -361,11 +361,11 @@ def create_production_order_from_line(request, line_pk):
             planned_start_date=timezone.now(),
             planned_end_date=order.promised_delivery_date or timezone.now(),
         )
-        # BOM ve Routing operasyonlarını/komponentlerini oluştur
+        # Create the BOM and Routing components/operations
         po.create_components_from_bom()
         po.create_operations_from_routing()
 
-        # Sipariş durumunu 'Üretimde' yap
+        # Set the order status to 'In Production'
         if order.status != SalesOrder.Status.IN_PRODUCTION:
             order.status = SalesOrder.Status.IN_PRODUCTION
             order.save()
@@ -426,7 +426,7 @@ def build_invoice_pdf_bytes(invoice, language_code=None):
 
     elements = []
 
-    # --- Üst Başlık: Logo + Şirket Bilgisi + FATURA ---
+    # --- Header: Logo + Company Info + INVOICE ---
     company_lines = []
     if settings.COMPANY_NAME:
         company_lines.append(settings.COMPANY_NAME)
@@ -459,7 +459,7 @@ def build_invoice_pdf_bytes(invoice, language_code=None):
     elements.append(HRFlowable(width="100%", color=BRAND_COLOR, thickness=1.5))
     elements.append(Spacer(1, 0.7 * cm))
 
-    # --- Müşteri Bilgisi + Fatura Bilgisi ---
+    # --- Customer Info + Invoice Info ---
     customer = invoice.customer
     customer_lines = [customer.name]
     if getattr(customer, "tax_number", None):
@@ -496,7 +496,7 @@ def build_invoice_pdf_bytes(invoice, language_code=None):
     elements.append(top_info)
     elements.append(Spacer(1, 0.9 * cm))
 
-    # --- Ürün Tablosu ---
+    # --- Product Table ---
     lines = order.lines.select_related("product").all()
     line_data = [[t("Ürün"), t("Miktar"), t("Birim Fiyat"), t("Toplam")]]
     for line in lines:
@@ -541,7 +541,7 @@ def build_invoice_pdf_bytes(invoice, language_code=None):
         ("FONTSIZE", (0, 0), (-1, 1), 10),
         ("FONTSIZE", (0, 2), (-1, 2), 13),
 
-        # Etiketler ve tutarlar düzgün hizalanır.
+        # Keeps labels and amounts properly aligned.
         ("ALIGN", (0, 0), (0, -1), "LEFT"),
         ("ALIGN", (1, 0), (1, -1), "RIGHT"),
         ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
@@ -558,7 +558,7 @@ def build_invoice_pdf_bytes(invoice, language_code=None):
         ("TEXTCOLOR", (0, 2), (-1, 2), BRAND_COLOR),
     ]))
 
-    # Sayfanın sağ kenarına düzgün oturur.
+    # Sits flush against the right edge of the page.
     totals_wrapper = Table(
         [["", totals_table]],
         colWidths=[8 * cm, 10 * cm],

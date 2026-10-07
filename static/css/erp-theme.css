@@ -276,7 +276,7 @@ table th, table td { border-color: var(--erp-border); }
 .btn-cancel, .btn-danger { background: var(--danger-solid); color: var(--on-solid); }
 .page-title, .filter-card h2, .table-card h2, .table-card h3 { color: var(--text-heading); }
 
-/* Panellerde ana portala dönüş */
+/* Link back to the main portal from panels */
 .header .portal-link {
     display: inline-flex;
     align-items: center;

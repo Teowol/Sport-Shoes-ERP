@@ -13,14 +13,14 @@ class Customer(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.PROTECT,
         related_name="customer_profile",
-        null=True,          # Geçiş: mevcut müşteriler için
-        blank=True,         # Admin panelde boş bırakılabilir
+        null=True,          # Migration: for existing customers
+        blank=True,         # Can be left blank in the admin panel
         verbose_name="Kullanıcı Hesabı",
     )
     code = models.CharField(max_length=20, unique=True)
     name = models.CharField(max_length=150)
     tax_number = models.CharField(max_length=50, blank=True)
-    email = models.EmailField()  # blank=True kaldırıldı, zorunlu
+    email = models.EmailField()  # blank=True removed, now required
     phone = models.CharField(max_length=30, blank=True)
     address = models.TextField(blank=True)
     is_active = models.BooleanField(default=True)
