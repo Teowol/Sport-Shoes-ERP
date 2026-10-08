@@ -14,6 +14,7 @@ from django.shortcuts import redirect, render
 from distribution.models import Customer
 from .models import Employee
 from .permissions import can_view_employees
+from .templatetags.module_navigation import resolve_module_links
 
 User = get_user_model()
 
@@ -90,7 +91,9 @@ def home(request):
         if is_buyer(request.user):
             return redirect("customer_home")
         return redirect("portal")
-    return render(request, "core/home.html")
+    return render(request, "core/home.html", {
+        "module_links": resolve_module_links(),
+    })
 
 
 @login_required
@@ -103,6 +106,7 @@ def portal(request):
         return redirect("customer_home")
     return render(request, "core/portal.html", {
         "can_view_employees": can_view_employees(request.user),
+        "module_links": resolve_module_links(),
     })
 
 

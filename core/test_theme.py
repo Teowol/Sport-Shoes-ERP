@@ -3,12 +3,12 @@ from pathlib import Path
 from django.conf import settings
 from django.contrib.staticfiles import finders
 from django.template.loader import get_template
-from django.test import Client, SimpleTestCase, override_settings
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 
 @override_settings(SECURE_SSL_REDIRECT=False)
-class SharedThemeTests(SimpleTestCase):
+class SharedThemeTests(TestCase):
     def test_public_and_admin_login_share_one_localized_controller(self):
         for language, label in (("tr", "Açık temaya geç"), ("en", "Switch to light theme")):
             self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = language

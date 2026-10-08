@@ -17,7 +17,7 @@ class HealthCheckTests(TestCase):
 
 
 @override_settings(SECURE_SSL_REDIRECT=False)
-class LanguageSwitchTests(SimpleTestCase):
+class LanguageSwitchTests(TestCase):
     def test_home_defaults_to_turkish_and_shows_theme_toggle(self):
         response = self.client.get(reverse("home"))
 

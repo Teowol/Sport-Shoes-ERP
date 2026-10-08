@@ -10,7 +10,6 @@
     <nav class="module-drawer-nav" aria-label="{% translate 'Modül menüsü' %}">
         {% include 'core/_module_menu_link.html' with route='home' label='Ana Sayfa' %}
         {% include 'core/_module_menu_link.html' with route='catalog:product_list' label='Ürün Kataloğu' %}
-        {% include 'core/_module_menu_link.html' with route='ai:chat_page' label='Yapay Zekâ Asistanı' %}
         {% if audience == 'customer' or audience == 'guest' %}
         <section class="module-drawer-group" aria-labelledby="module-customer-title">
             <h3 id="module-customer-title">{% translate "Müşteri İşlemleri" %}</h3>
@@ -23,19 +22,11 @@
         <section class="module-drawer-group" aria-labelledby="module-factory-title">
             <h3 id="module-factory-title">{% translate "ERP Modülleri" %}</h3>
             {% include 'core/_module_menu_link.html' with route='portal' label='İşletme Paneli' %}
-            {% if can_view_employees %}
-            {% include 'core/_module_menu_link.html' with route='employee_list' label='Çalışanlar' %}
-            {% endif %}
-            {% include 'core/_module_menu_link.html' with route='procurement:purchase_request_list' label='Tedarik ve Satın Alma' %}
-            {% include 'core/_module_menu_link.html' with route='inventory:stock_level_list' label='Stok Yönetimi' %}
-            {% include 'core/_module_menu_link.html' with route='inventory:stock_movement_list' label='Stok Hareketleri' %}
-            {% include 'core/_module_menu_link.html' with route='inventory:lot_tracking_list' label='Lot Takibi' %}
-            {% include 'core/_module_menu_link.html' with route='inventory:fire_tracking_list' label='Fire Takibi' %}
-            {% include 'core/_module_menu_link.html' with route='production:order_list' label='Üretim' %}
-            {% include 'core/_module_menu_link.html' with route='production:operation_list' label='Üretim Operasyonları' %}
-            {% include 'core/_module_menu_link.html' with route='production:cost_list' label='Maliyet Takibi' %}
-            {% include 'core/_module_menu_link.html' with route='quality:quality_check_list' label='Kalite Kontrol' %}
-            {% include 'core/_module_menu_link.html' with route='distribution:sales_order_list' label='Dağıtım ve Satış' %}
+            {% for link in module_links %}
+            <a class="module-drawer-link" href="{{ link.url }}">
+                <span>{{ link.module.label }}</span><span aria-hidden="true">↗</span>
+            </a>
+            {% endfor %}
         </section>
         {% endif %}
     </nav>

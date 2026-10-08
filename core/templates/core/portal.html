@@ -52,62 +52,13 @@
             </div>
 
             <div class="module-grid">
-                <a class="module-card" href="{% url 'ai:chat_page' %}">
-                    <div class="module-icon">✦</div>
-                    <h3>Yapay Zekâ Asistanı</h3>
-                    <span class="module-arrow">Asistanı aç →</span>
-                </a>
-
-                <a class="module-card" href="{% url 'inventory:stock_level_list' %}">
-                    <div class="module-icon">▣</div>
-                    <h3>Stok Yönetimi</h3>
+                {% for link in module_links %}
+                <a class="module-card" href="{{ link.url }}">
+                    <div class="module-icon" aria-hidden="true">{{ link.module.icon }}</div>
+                    <h3>{{ link.module.label }}</h3>
                     <span class="module-arrow">Modülü aç →</span>
                 </a>
-
-                <a class="module-card" href="{% url 'inventory:lot_tracking_list' %}">
-                    <div class="module-icon">⎇</div>
-                    <h3>Lot Takibi</h3>
-                    <span class="module-arrow">Modülü aç →</span>
-                </a>
-
-                <a class="module-card" href="{% url 'inventory:fire_tracking_list' %}">
-                    <div class="module-icon">✖</div>
-                    <h3>Fire Takibi</h3>
-                    <span class="module-arrow">Modülü aç →</span>
-                </a>
-
-                <a class="module-card" href="{% url 'production:order_list' %}">
-                    <div class="module-icon">⚙</div>
-                    <h3>Üretim</h3>
-                    <span class="module-arrow">Modülü aç →</span>
-                </a>
-
-                <a class="module-card" href="{% url 'production:cost_list' %}">
-                    <div class="module-icon">₺</div>
-                    <h3>Maliyet Takibi</h3>
-                    <span class="module-arrow">Modülü aç →</span>
-                </a>
-
-                <a class="module-card" href="{% url 'quality:quality_check_list' %}">
-                    <div class="module-icon">✓</div>
-                    <h3>Kalite Kontrol</h3>
-                    <span class="module-arrow">Modülü aç →</span>
-                </a>
-
-                <a class="module-card" href="{% url 'distribution:sales_order_list' %}">
-                    <div class="module-icon">↗</div>
-                    <h3>Dağıtım ve Satış</h3>
-                    <span class="module-arrow">Modülü aç →</span>
-                </a>
-                {% if can_view_employees %}
-                <a class="module-card" href="{% url 'employee_list' %}">
-                    <div class="module-icon" aria-hidden="true">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 5a3 3 0 0 1 0 6m2 3a5 5 0 0 1 3 4v2"/></svg>
-                    </div>
-                    <h3>{% translate "Çalışanlar" %}</h3>
-                    <span class="module-arrow">{% translate "Modülü aç →" %}</span>
-                </a>
-                {% endif %}
+                {% endfor %}
             </div>
         </section>
     </main>
