@@ -18,21 +18,40 @@ class HealthCheckTests(TestCase):
 
 @override_settings(SECURE_SSL_REDIRECT=False)
 class LanguageSwitchTests(SimpleTestCase):
-    def test_home_is_english_only(self):
+    def test_home_defaults_to_turkish_and_shows_theme_toggle(self):
         response = self.client.get(reverse("home"))
 
-        self.assertNotContains(response, 'class="language-toggle')
+        self.assertContains(response, 'class="language-toggle')
+        self.assertContains(response, "Alıcı Girişi")
+        self.assertContains(response, "Fabrika Sahibi Girişi")
+        self.assertContains(response, '<html lang="tr">', html=False)
+
+    def test_home_switches_to_english_and_persists_cookie(self):
+        response = self.client.post(
+            reverse("set_language"),
+            {"language": "en", "next": reverse("home")},
+        )
+
+        self.assertRedirects(response, reverse("home"), fetch_redirect_response=False)
+        self.assertEqual(
+            response.cookies[settings.LANGUAGE_COOKIE_NAME].value,
+            "en",
+        )
+
+        response = self.client.get(reverse("home"))
         self.assertContains(response, "Customer Login")
         self.assertContains(response, "Factory Owner Login")
         self.assertContains(response, '<html lang="en">', html=False)
+        self.assertContains(response, "language-toggle is-en")
+        self.assertNotContains(response, "Alıcı Girişi")
 
-    def test_login_and_register_have_no_language_toggle(self):
+    def test_login_and_register_show_language_toggle(self):
         for url_name in ("login", "register"):
             with self.subTest(url_name=url_name):
                 response = self.client.get(reverse(url_name))
 
-                self.assertNotContains(response, 'class="language-toggle')
-                self.assertContains(response, '<html lang="en">', html=False)
+                self.assertContains(response, 'class="language-toggle')
+                self.assertContains(response, '<html lang="tr">', html=False)
 
 
 @override_settings(SECURE_SSL_REDIRECT=False)
@@ -53,6 +72,7 @@ class RolePortalLanguageTests(TestCase):
 
         self.assertContains(response, "ERP Modules")
         self.assertContains(response, "Inventory Management")
+        self.assertContains(response, "language-toggle is-en")
         self.assertContains(response, '<html lang="en">', html=False)
         self.assertNotContains(response, "ERP Modülleri")
 
@@ -78,5 +98,6 @@ class RolePortalLanguageTests(TestCase):
 
         self.assertContains(response, "Customer Operations")
         self.assertContains(response, "Product Catalog")
+        self.assertContains(response, "language-toggle is-en")
         self.assertContains(response, '<html lang="en">', html=False)
         self.assertNotContains(response, "Müşteri İşlemleri")

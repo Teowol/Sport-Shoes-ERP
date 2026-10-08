@@ -16,6 +16,7 @@
         </div>
 
         <div class="top-actions" data-theme-toolbar>
+            {% include "core/_language_toggle.html" %}
             <span class="welcome">
                 Merhaba, {{ user.first_name|default:user.username }}
             </span>

@@ -10,17 +10,19 @@ from django.urls import reverse
 @override_settings(SECURE_SSL_REDIRECT=False)
 class SharedThemeTests(SimpleTestCase):
     def test_public_and_admin_login_share_one_localized_controller(self):
-        for name in ("home", "login", "register", "admin:login"):
-            with self.subTest(page=name):
-                response = self.client.get(reverse(name))
-                self.assertEqual(response.status_code, 200)
-                self.assertContains(response, 'data-theme-toggle hidden', count=1)
-                self.assertContains(response, "Switch to light theme")
-                self.assertContains(response, 'js/theme.js', count=1)
-                self.assertContains(response, 'css/theme.css', count=1)
-                self.assertNotContains(response, 'admin/js/theme.js')
-                content = response.content.decode()
-                self.assertLess(content.index('js/theme.js'), content.index('</head>'))
+        for language, label in (("tr", "Açık temaya geç"), ("en", "Switch to light theme")):
+            self.client.cookies[settings.LANGUAGE_COOKIE_NAME] = language
+            for name in ("home", "login", "register", "admin:login"):
+                with self.subTest(language=language, page=name):
+                    response = self.client.get(reverse(name))
+                    self.assertEqual(response.status_code, 200)
+                    self.assertContains(response, 'data-theme-toggle hidden', count=1)
+                    self.assertContains(response, label)
+                    self.assertContains(response, 'js/theme.js', count=1)
+                    self.assertContains(response, 'css/theme.css', count=1)
+                    self.assertNotContains(response, 'admin/js/theme.js')
+                    content = response.content.decode()
+                    self.assertLess(content.index('js/theme.js'), content.index('</head>'))
 
     def test_theme_assets_are_available_to_staticfiles(self):
         for name in ("js/theme.js", "css/theme.css", "css/admin-theme.css"):
@@ -35,7 +37,7 @@ class SharedThemeTests(SimpleTestCase):
 
     def test_language_post_keeps_csrf_protection_and_shared_theme(self):
         client = Client(enforce_csrf_checks=True)
-        response = client.get(reverse("login"))
+        response = client.get(reverse("home"))
         token = response.cookies[settings.CSRF_COOKIE_NAME].value
         data = {"language": "en", "next": reverse("home")}
         self.assertEqual(client.post(reverse("set_language"), data).status_code, 403)

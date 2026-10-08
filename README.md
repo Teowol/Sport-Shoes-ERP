@@ -25,8 +25,9 @@ distribution/sales, and an AI-assisted document/chat module.
 
 ## Language
 
-The application interface is English-only. The historical Turkish/English
-language toggle has been removed; `LANGUAGE_CODE` is fixed to `"en"`.
+The application interface supports Turkish and English. Turkish is the
+default (`LANGUAGE_CODE = "tr"`), and a language toggle lets users switch to
+English on any page.
 
 ## Running locally (Windows, no Docker)
 
