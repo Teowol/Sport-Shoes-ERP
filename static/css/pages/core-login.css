@@ -2,36 +2,66 @@
         body {
             min-height: 100vh;
             margin: 0;
-            display: grid;
-            place-items: center;
             padding: 25px;
             color: var(--text-primary);
             font-family: Arial, Helvetica, sans-serif;
         }
+        .topbar { margin: -25px -25px 0; }
         .card {
             width: min(100%, 420px);
+            margin: 48px auto 0;
             padding: 35px;
             border: 1px solid var(--accent-border);
             border-radius: 14px;
             background: var(--surface-primary);
             box-shadow: var(--shadow);
         }
-        .brand {
-            color: var(--accent-text);
+        h1 { margin: 24px 0 8px; text-align: center; font-size: 26px; }
+        .topbar {
+            min-height: 78px;
+            padding: 14px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .topbar .brand {
             font-size: 20px;
             font-weight: 700;
             letter-spacing: 5px;
-            text-align: center;
+            text-decoration: none;
         }
-        .brand img {
-            display: block;
-            width: min(100%, 240px);
-            max-height: 125px;
-            margin: 0 auto;
-            object-fit: contain;
-            border-radius: 10px;
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        h1 { margin: 24px 0 8px; text-align: center; font-size: 26px; }
+        .user-actions .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 39px;
+            border: 1px solid var(--accent-border);
+            border-radius: 7px;
+            padding: 8px 15px;
+            color: var(--text-primary);
+            background: transparent;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+        .user-actions .button:hover {
+            color: var(--on-accent);
+            background: var(--accent-hover);
+            border-color: var(--accent-border);
+        }
+        @media (max-width: 550px) {
+            .topbar { padding: 14px 5%; }
+            .topbar .brand { font-size: 16px; letter-spacing: 3px; }
+        }
         .subtitle { margin: 0 0 24px; color: var(--muted); text-align: center; font-size: 14px; }
         label { display: block; margin: 16px 0 7px; color: var(--accent-text); font-size: 13px; font-weight: 700; }
         input {

@@ -4,12 +4,18 @@
 {% block title %}{% translate "Üye Ol" %} | SPEEDERS{% endblock %}
 {% block page_class %}page-auth{% endblock %}
 {% block page_styles %}
-<link rel="stylesheet" href="{% static 'css/pages/core-register.css' %}?v=1">
+<link rel="stylesheet" href="{% static 'css/pages/core-register.css' %}?v=2">
 {% endblock %}
 {% block content %}
-<nav class="language-nav" aria-label="{% translate 'Dil seçimi' %}" data-theme-toolbar>
-        {% include "core/_language_toggle.html" %}
-    </nav>
+<header class="topbar">
+        <div class="module-menu-brand">
+            <a class="brand" href="{% url 'home' %}">SPEEDERS</a>
+        </div>
+        <div class="user-actions" data-theme-toolbar>
+            {% include "core/_language_toggle.html" %}
+            <a class="button" href="{% url 'login' %}">Giriş Yap</a>
+        </div>
+    </header>
     <main class="card">
         <div class="brand">SPEEDERS</div>
         <h1>Müşteri Kaydı</h1>

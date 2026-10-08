@@ -4,16 +4,19 @@
 {% block title %}{% translate "Giriş Yap" %} | SPEEDERS{% endblock %}
 {% block page_class %}page-auth{% endblock %}
 {% block page_styles %}
-<link rel="stylesheet" href="{% static 'css/pages/core-login.css' %}?v=4">
+<link rel="stylesheet" href="{% static 'css/pages/core-login.css' %}?v=5">
 {% endblock %}
 {% block content %}
-<nav class="language-nav" aria-label="{% translate 'Dil seçimi' %}" data-theme-toolbar>
-        {% include "core/_language_toggle.html" %}
-    </nav>
+<header class="topbar">
+        <div class="module-menu-brand">
+            <a class="brand" href="{% url 'home' %}">SPEEDERS</a>
+        </div>
+        <div class="user-actions" data-theme-toolbar>
+            {% include "core/_language_toggle.html" %}
+            <a class="button" href="{% url 'register' %}">Üye Ol</a>
+        </div>
+    </header>
     <main class="card">
-        <a class="brand" href="{% url 'home' %}" aria-label="SPEEDERS">
-            <img src="{% static 'branding/SPEEDERS.png' %}" alt="SPEEDERS">
-        </a>
         <h1>Giriş Yap</h1>
         <p class="subtitle">Müşteri veya firma yetkilisi hesabınızla giriş yapın.</p>
         <form method="post">

@@ -2,15 +2,15 @@
         body {
             min-height: 100vh;
             margin: 0;
-            display: grid;
-            place-items: center;
             padding: 25px;
             color: var(--text-primary);
             background: var(--bg-gradient);
             font-family: Arial, Helvetica, sans-serif;
         }
+        .topbar { margin: -25px -25px 0; }
         .card {
             width: min(100%, 440px);
+            margin: 48px auto 0;
             padding: 35px;
             border: 1px solid var(--accent-border);
             border-radius: 14px;
@@ -26,6 +26,51 @@
         }
         h1 { margin: 24px 0 8px; text-align: center; font-size: 26px; }
         .subtitle { margin: 0 0 20px; color: var(--muted); text-align: center; font-size: 14px; }
+        .topbar {
+            min-height: 78px;
+            padding: 14px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .topbar .brand {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 5px;
+            text-decoration: none;
+        }
+        .user-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-actions .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 39px;
+            border: 1px solid var(--accent-border);
+            border-radius: 7px;
+            padding: 8px 15px;
+            color: var(--text-primary);
+            background: transparent;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+        .user-actions .button:hover {
+            color: var(--on-accent);
+            background: var(--accent-hover);
+            border-color: var(--accent-border);
+        }
+        @media (max-width: 550px) {
+            .topbar { padding: 14px 5%; }
+            .topbar .brand { font-size: 16px; letter-spacing: 3px; }
+        }
         label { display: block; margin: 15px 0 7px; color: var(--accent-text); font-size: 13px; font-weight: 700; }
         input {
             width: 100%;
@@ -37,6 +82,21 @@
             background: var(--input-bg);
         }
         input:focus { border-color: var(--accent-border); }
+        textarea {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            padding: 11px 12px;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 7px;
+            outline: none;
+            background: var(--input-bg);
+            display: block;
+            resize: vertical;
+            overflow-x: hidden;
+        }
+        textarea:focus { border-color: var(--accent-border); }
         .helptext { display: block; margin-top: 6px; color: var(--muted); font-size: 12px; line-height: 1.45; }
         ul.errorlist { margin: 6px 0; padding-left: 18px; color: var(--danger-text); font-size: 12px; }
         button {
